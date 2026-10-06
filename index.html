@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cvent QC Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#FFFFFF; --tint:#F5F8F9; --rail:#F5F8F9; --head-c:#00004D; --ink:#18222E; --ink2:#4A5866; --ink3:#727E8A; --line:#DCE3E6; --line2:#ECF0F2;
+  --pass:#13675B; --fail:#B33A2A; --blocked:#A86A12; --prog:#2F4FA8; --na:#8E9AA6; --ns:#CBD3D1;
+  --pass-bg:#E0EFEB; --fail-bg:#F6E3DF; --blocked-bg:#F5EBD9; --prog-bg:#E6E6F3; --na-bg:#EDF1F3; --ns-bg:#F5F8F9;
+  --focus:#2F5AA8;
+  --head:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121820; --surface:#18202A; --tint:#1A222C; --rail:#0E141B; --head-c:#C3C6F5; --ink:#E6ECEF; --ink2:#AEB9C3; --ink3:#7F8B96; --line:#2C3743; --line2:#222C37;
+    --pass:#4FB8A4; --fail:#E7735F; --blocked:#D9A24A; --prog:#7FA4E6; --na:#8E9AA6; --ns:#3A4652;
+    --pass-bg:#16332E; --fail-bg:#3A1F1B; --blocked-bg:#36291A; --prog-bg:#1C2A42; --na-bg:#232C35; --ns-bg:#1F2832;
+    --focus:#7FA4E6; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121820; --surface:#18202A; --tint:#1A222C; --rail:#0E141B; --head-c:#C3C6F5; --ink:#E6ECEF; --ink2:#AEB9C3; --ink3:#7F8B96; --line:#2C3743; --line2:#222C37;
+  --pass:#4FB8A4; --fail:#E7735F; --blocked:#D9A24A; --prog:#7FA4E6; --na:#8E9AA6; --ns:#3A4652;
+  --pass-bg:#16332E; --fail-bg:#3A1F1B; --blocked-bg:#36291A; --prog-bg:#1C2A42; --na-bg:#232C35; --ns-bg:#1F2832;
+  --focus:#7FA4E6; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--prog)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:-0.01em;margin:0;color:var(--head-c)}
+
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100vh}
+/* Rail */
+.rail{background:var(--rail);border-right:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.brand{padding:22px 20px 14px}
+.brand h1{font-size:20px;line-height:1.15}
+.brand p{margin:4px 0 0;color:var(--ink3);font-size:13px}
+.who{padding:0 20px 16px}
+.who label{display:block;font-size:12.5px;color:var(--ink2);margin-bottom:4px;font-weight:600}
+.who input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.who small{display:block;color:var(--ink3);font-size:12px;margin-top:4px}
+.steps{list-style:none;margin:0;padding:6px 10px 12px;flex:1}
+.steps a{display:grid;grid-template-columns:26px 1fr auto;gap:2px 8px;align-items:baseline;padding:8px 10px;border-radius:7px;text-decoration:none;color:var(--ink)}
+.steps a:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.steps a[aria-current="page"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--head-c)}
+.steps a[aria-current="page"] .t{color:var(--head-c)}
+.steps .n{font-family:var(--head);font-weight:700;color:var(--ink3);font-size:13px;font-variant-numeric:tabular-nums}
+.steps .t{font-weight:600;font-size:14px}
+.steps .c{font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.steps .bar{grid-column:2/4}
+.bar{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--line)}
+.bar i{display:block;height:100%}
+.bar .b-pass{background:var(--pass)}.bar .b-fail{background:var(--fail)}.bar .b-blocked{background:var(--blocked)}.bar .b-prog{background:var(--prog)}.bar .b-na{background:var(--na)}
+.tools{padding:12px 16px 18px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tools button{padding:7px 8px;font-size:13px}
+.tools .saved{grid-column:1/-1;font-size:12px;color:var(--ink3);text-align:center;min-height:18px}
+
+/* Buttons */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:13.5px;line-height:1.2}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--head-c);color:var(--bg);border-color:var(--head-c)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--line)}
+.btn.danger{color:var(--fail)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Main */
+main{min-width:0;padding:34px clamp(16px,4vw,48px) 80px}
+.wrap{max-width:980px}
+.stephead{margin-bottom:22px}
+.stephead .num{font-family:var(--head);font-weight:500;color:var(--ink3);font-size:15px}
+.stephead h2{font-size:clamp(28px,4vw,38px);line-height:1.08;margin-top:2px}
+.stephead .sub{color:var(--ink2);margin:6px 0 0;max-width:68ch}
+.intro{margin:14px 0 0;padding:12px 14px;border-left:3px solid var(--head-c);color:var(--ink2);font-size:14px;max-width:72ch;background:var(--tint)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 6px;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.toolbar .spacer{flex:1}
+.toolbar select{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:13.5px}
+.toolbar .stat{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+
+.group{margin-top:26px}
+.grouphead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;background:var(--head-c);color:var(--bg);border-radius:8px 8px 0 0}
+.grouphead input{background:transparent;border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);color:var(--bg);border-radius:5px;padding:5px 8px;font-family:var(--head);font-weight:700;font-size:17px;min-width:0;flex:1 1 220px}
+.grouphead .lbl{font-size:12.5px;opacity:.75}
+.grouphead .btn{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 35%,transparent)}
+.group .sections{border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;padding:0 14px 8px;background:var(--surface)}
+
+.section{margin-top:22px}
+.section > h3{font-size:17px;padding-bottom:6px;border-bottom:2px solid var(--head-c);display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.section > h3 span{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.addrow{margin-top:8px}
+
+.check{border-bottom:1px solid var(--line2);padding:12px 0 12px 12px;position:relative}
+.check::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:2px;background:var(--ns)}
+.check[data-s="Pass"]::before{background:var(--pass)}.check[data-s="Fail"]::before{background:var(--fail)}.check[data-s="Blocked"]::before{background:var(--blocked)}.check[data-s="In Progress"]::before{background:var(--prog)}.check[data-s="N/A"]::before{background:var(--na)}
+.check.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%{background:var(--prog-bg)}100%{background:transparent}}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 18px;align-items:start}
+.cat{font-size:12px;color:var(--ink3);font-weight:600}
+.item{margin:1px 0 0;font-weight:500}
+.exp{margin:3px 0 0;font-size:13px;color:var(--ink2)}
+.exp b{font-weight:600;color:var(--ink3)}
+.statuses{display:flex;flex-wrap:nowrap;gap:4px;justify-content:flex-end}
+@media (max-width:1180px){.crow{grid-template-columns:1fr}.statuses{justify-content:flex-start;flex-wrap:wrap}.side{flex-wrap:wrap}}
+.statuses button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 9px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink2);white-space:nowrap}
+.statuses button:hover{border-color:var(--ink3)}
+.statuses button[aria-pressed="true"][data-v="Not Started"]{background:var(--ns-bg);border-color:var(--ink3);color:var(--ink)}
+.statuses button[aria-pressed="true"][data-v="In Progress"]{background:var(--prog);border-color:var(--prog);color:#fff}
+.statuses button[aria-pressed="true"][data-v="Pass"]{background:var(--pass);border-color:var(--pass);color:#fff}
+.statuses button[aria-pressed="true"][data-v="Fail"]{background:var(--fail);border-color:var(--fail);color:#fff}
+.statuses button[aria-pressed="true"][data-v="Blocked"]{background:var(--blocked);border-color:var(--blocked);color:#fff}
+.statuses button[aria-pressed="true"][data-v="N/A"]{background:var(--na);border-color:var(--na);color:#fff}
+:root[data-theme="dark"] .statuses button[aria-pressed="true"]:not([data-v="Not Started"]){color:#0E141B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .statuses button[aria-pressed="true"]:not([data-v="Not Started"]){color:#0E141B}}
+.side{display:flex;align-items:center;gap:12px}
+.applies{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:3px 0;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap;flex:none}
+.applies .sw{position:relative;width:30px;height:17px;border-radius:999px;background:var(--ns);transition:background .15s;flex:none}
+.applies .sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.06);transition:left .15s}
+.applies[aria-checked="true"] .sw{background:var(--head-c)}
+.applies[aria-checked="true"] .sw::after{left:15px}
+.applies:hover .sw{box-shadow:0 0 0 2px var(--line)}
+.titleline{display:flex;align-items:flex-start;gap:10px}
+.titleline .applies{margin-top:1px;color:var(--ink3)}
+.titleline .item{margin:0;min-width:0}
+.titleline .applies{width:62px}
+.check:not(.is-na) .exp,.check:not(.is-na) .meta,.check:not(.is-na) details.more{margin-left:72px}
+@media (max-width:860px){.check:not(.is-na) .meta,.check:not(.is-na) details.more{margin-left:0}}
+.check.is-na{padding-top:7px;padding-bottom:7px}
+.check.is-na::before{top:7px;bottom:7px}
+.check.is-na .naline{display:flex;align-items:center;gap:10px;min-width:0;color:var(--ink3)}
+.check.is-na .naline .applies{color:var(--head-c)}
+.check.is-na .naline .natext{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font-size:12.5px;color:var(--ink3);align-items:center}
+.meta .sev{font-weight:700}
+.meta .sev.Critical{color:var(--fail)}.meta .sev.High{color:var(--fail)}.meta .sev.Medium{color:var(--blocked)}.meta .sev.Low{color:var(--ink2)}
+details.more summary{cursor:pointer;color:var(--ink2);font-weight:600;font-size:12.5px;list-style:none;display:inline-flex;gap:4px;align-items:center}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+";display:inline-block;width:12px;text-align:center}
+details.more[open] summary::before{content:"\2212"}
+.fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 12px;margin-top:10px;padding:12px;background:var(--tint);border:1px solid var(--line);border-radius:8px}
+.fields .w2{grid-column:span 2}.fields .w4{grid-column:1/-1}
+.f label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:13.5px}
+.f textarea{min-height:58px;resize:vertical}
+.f select:disabled{opacity:.5}
+.fields .rm{grid-column:1/-1;display:flex;justify-content:flex-end}
+
+.empty{padding:28px 0;color:var(--ink3)}
+
+/* Start here */
+.prose{max-width:72ch}
+.prose p{margin:0 0 12px}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;margin-top:28px}
+.keylist{list-style:none;margin:10px 0 0;padding:0}
+.keylist li{display:grid;grid-template-columns:104px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;justify-self:start;align-self:start}
+.chip.s-ns{background:var(--ns-bg);color:var(--ink2)}.chip.s-prog{background:var(--prog-bg);color:var(--prog)}.chip.s-pass{background:var(--pass-bg);color:var(--pass)}.chip.s-fail{background:var(--fail-bg);color:var(--fail)}.chip.s-blocked{background:var(--blocked-bg);color:var(--blocked)}.chip.s-na{background:var(--na-bg);color:var(--ink2)}
+.chip.v-Critical{background:var(--fail);color:#fff}.chip.v-High{background:var(--fail-bg);color:var(--fail)}.chip.v-Medium{background:var(--blocked-bg);color:var(--blocked)}.chip.v-Low{background:var(--ns-bg);color:var(--ink2)}
+ol.before{padding-left:22px;margin:10px 0 0}
+ol.before li{padding:4px 0}
+h3.k{font-size:18px}
+.index{list-style:none;padding:0;margin:10px 0 0}
+.index li a{display:grid;grid-template-columns:30px 170px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);text-decoration:none;color:var(--ink)}
+.index li a:hover .nm{text-decoration:underline}
+.index .nn{font-family:var(--head);font-weight:700;color:var(--ink3)}
+.index .nm{font-weight:600}
+.index .d{color:var(--ink2);font-size:14px}
+
+/* Cover */
+.cover{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+.cover .f{padding:9px 0;border-bottom:1px solid var(--line2)}
+.cover .f label{font-size:13px}
+.cover .f input,.cover .f textarea{background:var(--surface)}
+.urlrow{display:flex;gap:6px;align-items:center}
+.urlrow a{font-size:12.5px;white-space:nowrap;font-weight:600}
+
+/* Dashboard */
+.verdict{display:grid;grid-template-columns:auto 1fr;gap:18px 28px;align-items:center;padding:22px 24px;border:2px solid var(--head-c);border-radius:10px;background:var(--surface)}
+.stamp{font-family:var(--head);font-weight:700;font-size:clamp(44px,8vw,72px);line-height:.9;letter-spacing:-0.02em;padding:10px 18px;border:4px solid currentColor;border-radius:8px;transform:rotate(-2deg)}
+.stamp.go{color:var(--pass)}.stamp.nogo{color:var(--fail)}
+.verdict .why{font-size:14.5px;color:var(--ink2)}
+.verdict .why b{color:var(--ink)}
+.rule{font-size:13px;color:var(--ink3);margin-top:6px}
+.counts{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;margin-top:22px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.counts div{padding:12px 14px;border-right:1px solid var(--line2)}
+.counts div:last-child{border-right:0}
+.counts strong{display:block;color:var(--head-c);font-family:var(--head);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.counts span{font-size:12.5px;color:var(--ink2);font-weight:600}
+.counts .k-pass strong{color:var(--pass)}.counts .k-fail strong{color:var(--fail)}.counts .k-blocked strong{color:var(--blocked)}.counts .k-prog strong{color:var(--prog)}
+h3.dh{font-size:20px;margin:38px 0 10px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line2);vertical-align:top}
+th{font-weight:600;color:var(--head-c);font-size:12.5px;background:var(--tint)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td .bar{min-width:120px;height:7px;margin-top:5px}
+.issues td a{font-weight:600}
+.signoff input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.attest{display:flex;gap:12px;align-items:flex-start;margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);max-width:80ch}
+.attest input{width:18px;height:18px;margin-top:3px;flex:none}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--head-c);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:90vw}
+.toast.show{opacity:1}
+.menu-btn{display:none}
+.app.gate{grid-template-columns:1fr}
+.app.gate .rail,.app.gate .menu-btn{display:none!important}
+.gatebox{max-width:440px;margin:8vh auto 0}
+.gatebox h2{font-size:32px;line-height:1.1}
+.gatebox p{color:var(--ink2)}
+.gatebox .f{margin-top:18px}
+.gatebox .f input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:15px}
+.gatebox .btn{margin-top:12px;padding:10px 16px;font-size:15px}
+.gatebox .msg{margin-top:14px;font-size:14px}
+.gatebox .msg.err{color:var(--fail)}
+.listhead{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.listhead .acts{display:flex;gap:8px;flex-wrap:wrap}
+.whoami{font-size:12px;color:var(--ink3);padding:0 20px 10px;word-break:break-all}
+.sync{display:inline-flex;align-items:center;gap:6px}
+.sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--pass)}
+.sync.saving::before{background:var(--prog)}
+.sync.error::before{background:var(--fail)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .rail{position:fixed;inset:0 auto 0 0;width:min(320px,88vw);z-index:40;transform:translateX(-100%);transition:transform .2s;height:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .app.nav-open .rail{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+  .menu-btn{display:inline-flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;margin:0;width:100%;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--rail);border:0;border-bottom:1px solid var(--line);font-weight:600;cursor:pointer}
+  main{padding-top:20px}
+  .menu-btn .burger{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:-6px -8px -6px 0;border-radius:6px;font-size:18px;line-height:1;transition:color .15s,background .15s}
+  .app.nav-open .menu-btn{z-index:45;background:transparent;border-bottom-color:transparent;pointer-events:none;justify-content:flex-end}
+  .app.nav-open .menu-btn #menuLabel{visibility:hidden}
+  .app.nav-open .menu-btn .burger{pointer-events:auto;color:#052DE2;background:#FFFFFF;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+  .crow{grid-template-columns:1fr}
+  .statuses{justify-content:flex-start;max-width:none}
+  .side{flex-wrap:wrap}
+  .fields{grid-template-columns:1fr 1fr}
+  .cover{grid-template-columns:1fr}
+  .counts{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .counts div{border-bottom:1px solid var(--line2)}
+  .verdict{grid-template-columns:1fr}
+  .stamp{justify-self:start}
+  .index li a{grid-template-columns:30px 1fr}
+  .index .d{grid-column:2}
+  .toolbar{top:calc(env(safe-area-inset-top,0px) + 44px)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  .rail,.toolbar,.menu-btn,.addrow,.toast,.grouphead .btn,.applies,.statuses button[aria-pressed="false"],.fields .rm,.tools{display:none!important}
+  .app{display:block}
+  main{padding:0}
+  details.more{display:none}
+  .check{break-inside:avoid}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <button class="menu-btn" id="menuBtn" aria-controls="rail" aria-expanded="false"><span id="menuLabel">Steps</span><span class="burger" aria-hidden="true">&#9776;</span></button>
+  <nav class="rail" id="rail" aria-label="Checklist steps">
+    <div class="brand">
+      <h1>Cvent QC Checklist</h1>
+      <p id="brandSub">Website &amp; registration build</p>
+    </div>
+    <div class="who">
+      <label for="reviewer">Your name</label>
+      <input id="reviewer" autocomplete="name" placeholder="Reviewer name">
+      <small>Fills in reviewer and date when you set a status.</small>
+    </div>
+    <div class="whoami" id="whoami" hidden></div>
+    <ul class="steps" id="steps"></ul>
+    <div class="tools">
+      <button class="btn" id="saveFile">Save file</button>
+      <button class="btn" id="openFile">Open file</button>
+      <button class="btn" id="exportCsv">Export CSV</button>
+      <button class="btn" id="printBtn">Print</button>
+      <button class="btn ghost danger" id="resetBtn" style="grid-column:1/-1">Start a new checklist</button>
+      <button class="btn ghost" id="signOutBtn" style="grid-column:1/-1" hidden>Sign out</button>
+      <div class="saved" id="savedNote" aria-live="polite"></div>
+      <input type="file" id="fileInput" accept=".json,application/json" class="sr" tabindex="-1">
+    </div>
+  </nav>
+  <main id="main" tabindex="-1"><div class="wrap" id="view"></div></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const DATA = [{"id": "s3", "num": 3, "name": "Event Settings", "title": "EVENT SETTINGS — Cvent back-end", "intro": "Verify Cvent event-level settings against the Reg Start Up Form. The Web Designer should double-check these settings; the QC reviewer confirms they match the source-of-truth Reg Start Up Form.", "sections": [{"title": "EVENT-LEVEL SETTINGS", "checks": [{"cat": "Event Settings", "item": "Event Title matches Reg Start Up Form exactly (capitalization, spacing, punctuation).", "exp": "From Reg Start Up Form > Event Details > Event Title"}, {"cat": "Event Settings", "item": "Project number entered in 'Program Number' field (Augeo Cvent account only)", "exp": "From Reg Start Up Form > Event Details > Project Number"}, {"cat": "Event Settings", "item": "Event Start Date is correct.", "exp": "From Reg Start Up Form > Event Dates > Event Start Date"}, {"cat": "Event Settings", "item": "Event End Date is correct.", "exp": "From Reg Start Up Form > Event Dates > Event End Date"}, {"cat": "Event Settings", "item": "Event Time Zone is correct.", "exp": "From Reg Start Up Form > Event Time Zone"}, {"cat": "Event Settings", "item": "Event Location (Venue, address, city, state, country, zip, phone) is correct.", "exp": "From Reg Start Up Form > Event Location"}, {"cat": "Event Settings", "item": "Registration Team Name set correctly.", "exp": "From Reg Start Up Form > Registration Team Name"}, {"cat": "Event Settings", "item": "Registration shared mailbox email set as sender on confirmations.", "exp": "From Reg Start Up Form > Registration Email Address"}, {"cat": "Event Settings", "item": "Registration phone number is correct.", "exp": "From Reg Start Up Form > Registration Phone #"}]}, {"title": "REGISTRATION TYPES & PATHS", "checks": [{"cat": "Reg Types", "item": "All Registration Types from Reg Start Up Form exist in Cvent.", "exp": "List from Reg Start Up Form > Registration Types"}, {"cat": "Reg Types", "item": "'Other' registration type exists for internal Augeo/Travel Staff.", "exp": "Always required"}, {"cat": "Reg Types", "item": "Invitation Lists created (if invite-only event) and assigned to correct paths.", "exp": ""}, {"cat": "Reg Types", "item": "Public/Private-event settings configured correctly.", "exp": ""}, {"cat": "Reg Types", "item": "Max number of guests per reg type matches Reg Start Up Form.", "exp": "From Reg Start Up Form > Max # of Guests"}, {"cat": "Reg Types", "item": "Guest buy-in vs included is set correctly per reg type.", "exp": "From Reg Start Up Form > Guest allowed?"}, {"cat": "Reg Types", "item": "Closed vs Open Link setting per reg type matches Reg Start Up Form.", "exp": "From Reg Start Up Form > Closed or Open Link?"}, {"cat": "Reg Types", "item": "Registration fee set correctly per reg type (incl. 4% CC processing fee if applicable).", "exp": "From Reg Start Up Form > Registration Fee?"}, {"cat": "Reg Types", "item": "'Modify registration' enabled/disabled correctly per reg type.", "exp": "From Reg Start Up Form > Option to modify registration?"}, {"cat": "Reg Types", "item": "'Cancel Registration' enabled/disabled correctly per reg type.", "exp": "From Reg Start Up Form > Option to cancel registration?"}]}, {"title": "DEADLINES & CAPACITIES", "checks": [{"cat": "Deadlines", "item": "Registration Deadline set to Event Start (or earlier close date if specified).", "exp": ""}, {"cat": "Capacities", "item": "Activity / Session capacities set correctly.", "exp": "Reference Activities tab in Reg Start Up Form > Max Capacity"}, {"cat": "Capacities", "item": "Waitlists configured per session as required.", "exp": "From Reg Start Up Form > Activities > Waitlist?"}, {"cat": "Capacities", "item": "Hotel room block created and quantities match contracted block.", "exp": "From Reg Start Up Form > Accommodations > Contracted Room Block"}, {"cat": "Capacities", "item": "Room block(s) assigned to correct registration path(s).", "exp": ""}, {"cat": "Capacities", "item": "Planner alerts set up for session capacity.", "exp": ""}, {"cat": "Capacities", "item": "Planner alerts set up for hotel room capacity.", "exp": ""}]}]}, {"id": "s4", "num": 4, "name": "Design vs Figma", "title": "DESIGN vs FIGMA — Visual QC", "intro": "Open Figma side-by-side with the live Cvent website. Verify visual fidelity across pages, devices, and browsers. Check every page in the website AND the registration form.", "sections": [{"title": "BRAND & TYPOGRAPHY", "checks": [{"cat": "Branding", "item": "Logo file matches Figma (correct version, transparent background, correct sizing).", "exp": "Figma > Logo asset"}, {"cat": "Branding", "item": "Brand colors match Figma (primary, secondary, accent). Hex codes match exactly.", "exp": "Figma > Color styles"}, {"cat": "Typography", "item": "Headline font family matches Figma (H1, H2, H3).", "exp": "Figma > Type styles"}, {"cat": "Typography", "item": "Body font family matches Figma.", "exp": "Figma > Type styles"}, {"cat": "Typography", "item": "Font sizes / line heights match Figma across breakpoints.", "exp": "Figma > Type sizes"}, {"cat": "Typography", "item": "Font weights (bold, regular, italic) are applied correctly.", "exp": ""}, {"cat": "Typography", "item": "Button text styling matches Figma (size, weight, casing).", "exp": "Figma > Button components"}]}, {"title": "LAYOUT & SPACING", "checks": [{"cat": "Layout", "item": "Header / navigation matches Figma layout and links.", "exp": "Figma > Header component"}, {"cat": "Layout", "item": "Footer matches Figma layout (logo, links, copyright, contact info).", "exp": "Figma > Footer component"}, {"cat": "Layout", "item": "Hero banner image matches Figma (correct asset, no crop issues).", "exp": "Figma > Hero section"}, {"cat": "Layout", "item": "Section padding / margins match Figma.", "exp": ""}, {"cat": "Layout", "item": "Content card layouts (Activities, Hotel, etc.) match Figma.", "exp": ""}, {"cat": "Layout", "item": "CTA buttons match Figma (style, size, color, hover state).", "exp": "Figma > Buttons"}, {"cat": "Layout", "item": "Image alignment matches Figma (left, right, centered, full-bleed).", "exp": ""}]}, {"title": "GRAPHICS & MEDIA", "checks": [{"cat": "Graphics", "item": "All images are the final approved versions (not placeholders).", "exp": ""}, {"cat": "Graphics", "item": "Images are not pixelated / low-res. Retina-quality where possible.", "exp": ""}, {"cat": "Graphics", "item": "Image alt text is present on all images if applicable", "exp": ""}, {"cat": "Graphics", "item": "Graphics fill wide screen (ensure spanned images full width)", "exp": ""}, {"cat": "Graphics", "item": "Videos (if any) play correctly with correct thumbnail.", "exp": ""}]}, {"title": "RESPONSIVE / DEVICE", "checks": [{"cat": "Responsive", "item": "Mobile - layout matches Figma images move appropriately", "exp": ""}, {"cat": "Responsive", "item": "Mobile navigation (hamburger / menu) works correctly.", "exp": ""}, {"cat": "Responsive", "item": "No horizontal scrolling on mobile.", "exp": ""}]}, {"title": "BROWSER COMPATIBILITY", "checks": [{"cat": "Browser", "item": "Chrome (latest) — site renders correctly.", "exp": ""}, {"cat": "Browser", "item": "Safari (latest) — site renders correctly.", "exp": ""}, {"cat": "Browser", "item": "Edge (latest) — site renders correctly.", "exp": ""}, {"cat": "Browser", "item": "Firefox (latest) — site renders correctly.", "exp": ""}, {"cat": "Browser", "item": "Mobile Safari (iOS) — site renders correctly.", "exp": ""}, {"cat": "Browser", "item": "Mobile Chrome (Android) — site renders correctly.", "exp": ""}]}, {"title": "INTERACTION & MOTION", "checks": [{"cat": "Interaction", "item": "Hover states on links / buttons work as designed.", "exp": ""}, {"cat": "Interaction", "item": "Accordion / expand-collapse elements function correctly.", "exp": ""}, {"cat": "Interaction", "item": "Modal pop-ups (if any) open and close correctly.", "exp": ""}, {"cat": "Interaction", "item": "Scroll behavior is smooth, no jank.", "exp": ""}, {"cat": "Interaction", "item": "Anchor links (in-page jumps) work correctly.", "exp": ""}]}]}, {"id": "s5", "num": 5, "name": "Website Pages", "title": "WEBSITE PAGES — Content QC vs approved Word doc", "intro": "By default, team reviews one reg path for pages unless specified by accounts prior — For EACH page, paste the expected text from the approved Word content document into 'Expected', and paste/observe what is built in 'What I See'. Confirm verbatim match. Add or remove rows for additional pages as needed.", "sections": [{"title": "PAGE ASSIGNMENT TO REGISTRATION TYPES", "checks": [{"cat": "All Pages", "item": "Each page is assigned to the correct Registration Type(s) per Reg Start Up Form.", "exp": "From Reg Start Up Form > Website Content tab"}, {"cat": "All Pages", "item": "Not Attending / Decline link is present on Invite and/or Home page", "exp": ""}, {"cat": "All Pages", "item": "Page Footer has correct info and Call to Actions (CTAs)", "exp": ""}]}, {"title": "WELCOME / HOME PAGE", "checks": [{"cat": "Welcome", "item": "Page title / browser tab title is correct.", "exp": ""}, {"cat": "Welcome", "item": "Hero headline text matches Word doc EXACTLY (spelling, punctuation, capitalization).", "exp": ""}, {"cat": "Welcome", "item": "Hero subheadline / body text matches Word doc EXACTLY.", "exp": ""}, {"cat": "Welcome", "item": "Event date displayed correctly.", "exp": ""}, {"cat": "Welcome", "item": "Event location displayed correctly.", "exp": ""}, {"cat": "Welcome", "item": "Primary CTA button text + destination is correct.", "exp": ""}, {"cat": "Welcome", "item": "Secondary CTA / 'Not Attending' link works.", "exp": ""}, {"cat": "Welcome", "item": "All body paragraphs match Word doc.", "exp": ""}, {"cat": "Welcome", "item": "Spelling and grammar check (read aloud).", "exp": "word doc content (high level cross checking the text if time permits)"}, {"cat": "Welcome", "item": "Planner email is linked correct, check subject line", "exp": ""}]}, {"title": "STAY / HOTEL PAGE", "checks": [{"cat": "Stay", "item": "Headline + body matches Word doc.", "exp": ""}, {"cat": "Stay", "item": "Hotel name, address, phone, website are correct.", "exp": "From Reg Start Up Form > Event Location"}, {"cat": "Stay", "item": "Check-in / check-out dates listed are correct.", "exp": "From Reg Start Up Form > Accommodations > Default dates"}, {"cat": "Stay", "item": "Room types described match contracted block.", "exp": ""}, {"cat": "Stay", "item": "Extension policy / additional night rates listed correctly.", "exp": "From Reg Start Up Form > Room rate for additional nights"}, {"cat": "Stay", "item": "Spelling and grammar.", "exp": "word doc content (high level cross checking the text if time permits)"}, {"cat": "Stay", "item": "All hyperlinks direct to correct URLs.", "exp": ""}]}, {"title": "AGENDA / SCHEDULE PAGE", "checks": [{"cat": "Agenda", "item": "All dates listed are correct.", "exp": ""}, {"cat": "Agenda", "item": "All times listed are correct (incl. time zone label).", "exp": ""}, {"cat": "Agenda", "item": "All activity/session names match Word doc.", "exp": ""}, {"cat": "Agenda", "item": "Ensure A.M. / P.M. on page is accurate and consistent", "exp": ""}, {"cat": "Agenda", "item": "Spelling and grammar.", "exp": "word doc content (high level cross checking the text if time permits)"}, {"cat": "Agenda", "item": "Session descriptions match Word doc.", "exp": ""}]}, {"title": "ACTIVITIES PAGE", "checks": [{"cat": "Activities", "item": "Any instructions match word Word doc exactly based on attendee registration", "exp": "word doc content"}, {"cat": "Activities", "item": "All activity names match Word doc exactly.", "exp": "word doc content"}, {"cat": "Activities", "item": "Activity descriptions match Word doc.", "exp": "word doc content"}, {"cat": "Activities", "item": "Activity images are correct and high-quality.", "exp": "Figma image & word doc content"}, {"cat": "Activities", "item": "Activity dates/times correct.", "exp": "word doc content"}, {"cat": "Activities", "item": "Spelling and grammar.", "exp": "word doc content (high level cross checking the text if time permits)"}]}, {"title": "TRAVEL / GETTING THERE PAGE", "checks": [{"cat": "Travel", "item": "Headline + body matches Word doc.", "exp": ""}, {"cat": "Travel", "item": "Airport(s) listed are correct.", "exp": "From Reg Start Up Form > Travel > Airports"}, {"cat": "Travel", "item": "Ground transport details correct.", "exp": ""}, {"cat": "Travel", "item": "If no air request page: 'Getting To [Destination]' page uses exact Word doc language.", "exp": ""}, {"cat": "Travel", "item": "Weather / passport / advisory verbiage is correct (if event requires).", "exp": ""}, {"cat": "Travel", "item": "Spelling and grammar.", "exp": "word doc content (high level cross checking the text if time permits)"}]}, {"title": "FAQ PAGE", "checks": [{"cat": "FAQ", "item": "All FAQ questions & answers match Word doc.", "exp": ""}, {"cat": "FAQ", "item": "Contact info (email, phone) for further questions is correct.", "exp": "From Reg Start Up Form > Registration Email / Phone"}, {"cat": "FAQ", "item": "Spelling and grammar.", "exp": ""}]}, {"title": "CONTACT / SUPPORT PAGE (if exists)", "checks": [{"cat": "Contact", "item": "Reg team email and phone correct.", "exp": ""}, {"cat": "Contact", "item": "Hours of operation listed correctly.", "exp": ""}, {"cat": "Contact", "item": "Air partner contact info (if applicable).", "exp": "From Reg Start Up Form > Air Partner"}]}, {"title": "ADDITIONAL / CUSTOM PAGES", "checks": [{"cat": "Custom Page A", "item": "Headline + body matches Word doc.", "exp": ""}, {"cat": "Custom Page A", "item": "Spelling and grammar.", "exp": ""}, {"cat": "Custom Page A", "item": "Hyperlinks direct correctly.", "exp": ""}, {"cat": "Custom Page B", "item": "Headline + body matches Word doc.", "exp": ""}, {"cat": "Custom Page B", "item": "Spelling and grammar.", "exp": ""}, {"cat": "Custom Page B", "item": "Hyperlinks direct correctly.", "exp": ""}]}, {"title": "GLOBAL / EVERY PAGE", "checks": [{"cat": "All Pages", "item": "ALL hyperlinks direct to the correct URL (click each one).", "exp": ""}, {"cat": "All Pages", "item": "ALL hyperlinks open in correct window (new tab vs same tab) per spec.", "exp": ""}, {"cat": "All Pages", "item": "No 'lorem ipsum' or placeholder text anywhere.", "exp": ""}, {"cat": "All Pages", "item": "No '[BRACKET PLACEHOLDERS]' anywhere.", "exp": ""}, {"cat": "All Pages", "item": "No broken images (alt text shows or image fails).", "exp": ""}, {"cat": "All Pages", "item": "Page navigation order matches approved sitemap.", "exp": ""}, {"cat": "All Pages", "item": "Page navigation is sticky or scrolling with proper background and opacity if applicable", "exp": ""}]}]}, {"id": "s6", "num": 6, "name": "Reg Path - TEMPLATE", "title": "REGISTRATION PATH — TEMPLATE (Main Path tested, duplicate for additional Reg Type needs)", "intro": "Team reviews one path unless specified per accounts prior to review — Right-click this tab → 'Move or Copy' → 'Create a Copy' for EACH registration type (Winner, Host, Staff, Other, etc.). Rename each copy to match the reg type. Then walk through registration as that reg type — test every required field, every conditional/sub-question, every path through guest vs. no-guest. Use a unique test email for each reg type.", "sections": [{"title": "REGISTRATION PATH ASSIGNMENT", "checks": [{"cat": "Path", "item": "Registration Path is assigned to the correct Registration Type.", "exp": "From Reg Start Up Form > Registration Types"}, {"cat": "Path", "item": "Page order in the registration flow is logical and matches spec.", "exp": ""}]}, {"title": "CONTACT / PERSONAL INFO — REGISTRANT", "checks": [{"cat": "Contact", "item": "Legal First Name field present, required if specified.", "exp": "Reg Start Up > Contact Fields"}, {"cat": "Contact", "item": "Middle Name field present if required.", "exp": ""}, {"cat": "Contact", "item": "Legal Last Name field present, required if specified.", "exp": ""}, {"cat": "Contact", "item": "Name Badge First Name field labeled 'Preferred First Name' if specified in Notes.", "exp": ""}, {"cat": "Contact", "item": "Name Badge Last Name field present if specified.", "exp": ""}, {"cat": "Contact", "item": "Name Badge City / State fields present if specified.", "exp": ""}, {"cat": "Contact", "item": "Job Title field present, required if specified.", "exp": ""}, {"cat": "Contact", "item": "Company field present, required if specified.", "exp": ""}, {"cat": "Contact", "item": "Preferred Address dropdown works; alternate address fields show correctly based on selection.", "exp": "ICT logic: only show one address fill-in based on selection"}, {"cat": "Contact", "item": "Work Address fields appear when 'Work' selected; Home Address fields appear when 'Home' selected.", "exp": ""}, {"cat": "Contact", "item": "Email Address field is pre-populated and read-only (correct behavior).", "exp": ""}, {"cat": "Contact", "item": "CC Email Address field present if specified and required.", "exp": ""}, {"cat": "Contact", "item": "Mobile Phone field present, required. Ensure verbiage about Mobile App if applicable", "exp": ""}, {"cat": "Contact", "item": "Work / Home Phone fields present if specified.", "exp": ""}, {"cat": "Contact", "item": "Date of Birth field present, required (if booking air or per spec).", "exp": ""}, {"cat": "Contact", "item": "Gender field present, required (if booking air or per spec).", "exp": ""}, {"cat": "Contact", "item": "Passport Number / Country / Issue Date / Expiration fields present if international travel.", "exp": "Reg Start Up > Contact Fields — Passport block"}, {"cat": "Contact", "item": "Admin Name / Phone / Email fields present if specified.", "exp": ""}]}, {"title": "CUSTOM QUESTIONS — REGISTRANT", "checks": [{"cat": "Custom Question", "item": "Emergency Contact Name / Phone / Relationship questions present and required if applicable.", "exp": "Reg Start Up > Custom Questions"}, {"cat": "Custom Question", "item": "Emergency Contact Relationship dropdown has correct options (Assistant, Associate, Colleague, Family Member, Friend, Partner, Relative, Spouse).", "exp": ""}, {"cat": "Custom Question", "item": "Dietary Considerations / Restrictions text field present, required if specified.", "exp": ""}, {"cat": "Custom Question", "item": "Dietary dropdown options match spec (None, Food Allergy, Gluten free, No red meat, No pork, No fish, No shellfish, Kosher, Halal, Vegetarian, Vegan, No dairy, Other, No Alcohol if applicable).", "exp": ""}, {"cat": "Custom Question", "item": "'Other' / 'Food Allergy' / 'Kosher' / 'Halal' / 'Vegetarian' selections trigger correct sub-question (free-text fill-in).", "exp": ""}, {"cat": "Custom Question", "item": "Medical Restriction Yes/No question present. Sub question to explain if Yes", "exp": ""}, {"cat": "Custom Question", "item": "Luggage tag address question + alternate address conditional logic works.", "exp": ""}, {"cat": "Custom Question", "item": "Name on Award field present if specified.", "exp": ""}, {"cat": "Custom Question", "item": "Phonetic Pronunciation (First / Last) fields present if specified.", "exp": ""}, {"cat": "Custom Question", "item": "General Comments / Text Box field present.", "exp": ""}, {"cat": "Custom Question", "item": "Event Policy Consent (Liability / Representation of Authority) present + required.", "exp": "Ensure we are using the new policy information"}, {"cat": "Custom Question", "item": "EZ Texting Opt-In Consent present + required if specified. **Potential change to Twilio", "exp": ""}, {"cat": "Custom Question", "item": "Real ID Agreement present if applicable.", "exp": "Ensure we are using the new terminology (remove \"as of May…\" information"}, {"cat": "Custom Question", "item": "International Passport Disclaimer present + required if international travel.", "exp": ""}, {"cat": "Custom Question", "item": "Minimum Age Disclaimer present + required if applicable.", "exp": ""}]}, {"title": "GUEST — CONTACT + CUSTOM", "checks": [{"cat": "Guest", "item": "Guest registration is enabled per Reg Start Up Form (Yes / No / Buy-in).", "exp": ""}, {"cat": "Guest", "item": "Max # of guests matches Reg Start Up Form.", "exp": ""}, {"cat": "Guest", "item": "Guest Legal First / Last Name fields present + required.", "exp": ""}, {"cat": "Guest", "item": "Guest Name Badge fields present if specified.", "exp": ""}, {"cat": "Guest", "item": "Guest Mobile Phone + Email present + required if specified.", "exp": ""}, {"cat": "Guest", "item": "Guest DOB / Gender present if booking air or per spec.", "exp": ""}, {"cat": "Guest", "item": "Guest Passport fields present if international.", "exp": ""}, {"cat": "Guest", "item": "Guest Dietary question present.", "exp": ""}, {"cat": "Guest", "item": "Guest Medical Restriction question present.", "exp": ""}, {"cat": "Guest", "item": "Guest minimum age disclaimer present if applicable.", "exp": ""}]}, {"title": "REQUIRED-FIELD VALIDATION", "checks": [{"cat": "Validation", "item": "All fields marked Required in Reg Start Up Form are actually required in the build.", "exp": ""}, {"cat": "Validation", "item": "No fields are required that should NOT be required.", "exp": ""}]}, {"title": "CONDITIONAL LOGIC", "checks": [{"cat": "Logic", "item": "Walked through registration choosing 'Other' on every dropdown that has an 'Other' option — sub-questions appear correctly for Registrant.", "exp": ""}, {"cat": "Logic", "item": "Same — sub-questions appear correctly for Guest.", "exp": ""}, {"cat": "Logic", "item": "Question visibility based on Registration Type works (questions only appear for the right reg types).", "exp": ""}, {"cat": "Logic", "item": "Question visibility based on prior answer works (e.g., dietary 'Other' → free-text appears).", "exp": ""}, {"cat": "Logic", "item": "Hotel page only shows if 'Required to book accommodation' is Yes for this reg type.", "exp": ""}, {"cat": "Logic", "item": "Travel/Air page only shows if travel request required for this reg type.", "exp": ""}]}, {"title": "REGISTRATION SUMMARY + CONFIRMATION", "checks": [{"cat": "Summary", "item": "Summary page correctly lists all selections (sessions, hotel, travel, special requests).", "exp": ""}, {"cat": "Summary", "item": "Summary page is correct for both Registrant and Guest.", "exp": ""}, {"cat": "Summary", "item": "Edit/back navigation from Summary returns to correct page with answers preserved.", "exp": ""}, {"cat": "Confirmation", "item": "Confirmation page content / pages / contact info is correct.", "exp": ""}, {"cat": "Confirmation", "item": "Confirmation page shows correct registration ID / reference number.", "exp": ""}]}, {"title": "REGRET / DECLINE PATH", "checks": [{"cat": "Regret", "item": "Regret/Decline survey is created and assigned to this Registration Path.", "exp": ""}, {"cat": "Regret", "item": "Regret survey questions match Reg Start Up Form > DECLINE SURVEY column.", "exp": ""}, {"cat": "Regret", "item": "Decline email is created and assigned to this path.", "exp": ""}]}]}, {"id": "s7", "num": 7, "name": "Hotel", "title": "HOTEL / ACCOMMODATIONS — Registration QC", "intro": "Verify the hotel request page during a test registration. Compare every detail against the Accommodations tab of the Reg Start Up Form.", "sections": [{"title": "HOTEL PAGE CONTENT", "checks": [{"cat": "Hotel", "item": "Hotel name displayed is correct.", "exp": "Reg Start Up > Accommodations / Event Location"}, {"cat": "Hotel", "item": "Hotel image (if used) is correct and current.", "exp": ""}, {"cat": "Hotel", "item": "Default Check-in date is correct per Reg Type.", "exp": "Reg Start Up > Default Check-in Date"}, {"cat": "Hotel", "item": "Default Checkout date is correct per Reg Type.", "exp": "Reg Start Up > Default Checkout Date"}, {"cat": "Hotel", "item": "Earliest Check-in date enforced (cannot pick earlier).", "exp": "Reg Start Up > Earliest Check-in Date"}, {"cat": "Hotel", "item": "Latest Checkout date enforced (cannot pick later).", "exp": "Reg Start Up > Latest Checkout Date"}, {"cat": "Hotel", "item": "Check-in / Check-out times displayed correctly.", "exp": "Reg Start Up > Check-in Time / Check-out Time"}, {"cat": "Hotel", "item": "Room rate for additional nights (incl. tax & fees) displayed correctly.", "exp": "Reg Start Up > Room rate for additional nights"}, {"cat": "Hotel", "item": "Cancellation policy displayed correctly when hotel is pay-on-own.", "exp": ""}]}, {"title": "ROOM BLOCK & ROOM TYPES", "checks": [{"cat": "Block", "item": "Contracted room block exists in Cvent with correct night-by-night counts. (Ensure all nights have a room allocation)", "exp": "Reg Start Up > Contracted Room Block"}, {"cat": "Block", "item": "Each room type (Deluxe, etc.) is set up correctly.", "exp": ""}, {"cat": "Block", "item": "Room type selection during reg is limited to the correct Registration Types per Reg Start Up Form.", "exp": ""}]}, {"title": "HOTEL REQUEST FIELDS / QUESTIONS", "checks": [{"cat": "Fields", "item": "Roommate question included only if Roommate Program is in scope.", "exp": ""}, {"cat": "Fields", "item": "Special Requests fill-in field present if specified.", "exp": "Reg Start Up > Special Requests"}, {"cat": "Fields", "item": "ADA Accessible Room Needed (Yes/No) present if specified.", "exp": ""}, {"cat": "Fields", "item": "Hotel Rewards Code Request field present if specified.", "exp": ""}, {"cat": "Fields", "item": "Bed Type Preference dropdown lists correct options (king, queen/queen, double/double, no preference etc.).", "exp": ""}, {"cat": "Fields", "item": "Extension question (Group Hotel / Assistance / On Own) present if specified.", "exp": ""}, {"cat": "Fields", "item": "Extension Comments fill-in present if specified.", "exp": ""}]}, {"title": "CREDIT CARD GUARANTEE", "checks": [{"cat": "CC", "item": "Credit Card Guarantee is set up if required.", "exp": "Reg Start Up > Credit Card Required"}, {"cat": "CC", "item": "CC required scope (EXT only vs all dates) matches Reg Start Up Form.", "exp": ""}]}, {"title": "DECLINE / NO-HOTEL PATH", "checks": [{"cat": "Decline", "item": "Decline Hotel Request option is visible when accommodation is NOT required for this reg type.", "exp": "Reg Start Up > 'Required to book accommodation?'"}, {"cat": "Decline", "item": "Decline options listed match Reg Start Up Form (Local, Staying elsewhere, etc.).", "exp": ""}, {"cat": "Decline", "item": "Selecting decline correctly skips the hotel block in Summary + Confirmation.", "exp": ""}]}, {"title": "GUEST HOTEL", "checks": [{"cat": "Guest", "item": "Guest is included on registrant's room booking (no separate guest hotel page) — or — separate guest hotel block exists per spec.", "exp": ""}]}]}, {"id": "s8", "num": 8, "name": "Travel", "title": "TRAVEL / AIR — Registration QC", "intro": "Verify the travel request page during a test registration. Compare every detail against the Travel tab of the Reg Start Up Form.", "sections": [{"title": "TRAVEL REQUEST PAGE", "checks": [{"cat": "Travel", "item": "Travel Request page only appears for Registration Types where Air Required = Yes.", "exp": "Reg Start Up > Travel > Require travel request?"}, {"cat": "Travel", "item": "If air NOT booked: 'Getting To [Destination]' content page uses exact Word doc language.", "exp": "Reg Start Up Form note"}, {"cat": "Travel", "item": "Page headline and intro match Word doc.", "exp": ""}]}, {"title": "DATES & AIRPORTS", "checks": [{"cat": "Dates", "item": "Default Travel Arrival Date correct per reg type.", "exp": "Reg Start Up > Default Travel Arrival Date"}, {"cat": "Dates", "item": "Default Travel Departure Date correct per reg type.", "exp": "Reg Start Up > Default Travel Departure Date"}, {"cat": "Dates", "item": "Earliest Travel Arrival enforced — cannot pick earlier.", "exp": "Reg Start Up > Earliest Travel Arrival Date"}, {"cat": "Dates", "item": "Latest Travel Departure enforced — cannot pick later.", "exp": "Reg Start Up > Latest Travel Departure Date"}, {"cat": "Airports", "item": "Allowed airport codes match Reg Start Up Form exactly.", "exp": "Reg Start Up > Airport Information"}, {"cat": "Airports", "item": "No other airports are selectable.", "exp": ""}]}, {"title": "STANDARD AIR FIELDS", "checks": [{"cat": "Fields", "item": "Preferred Time of Day (Morning / Afternoon) included if specified.", "exp": ""}, {"cat": "Fields", "item": "Seat Preference (Window / Aisle / Middle) included if specified.", "exp": ""}, {"cat": "Fields", "item": "Preferred Airline / Rewards # included if specified.", "exp": ""}, {"cat": "Fields", "item": "Redress Number / Known Traveler Number included if specified.", "exp": ""}]}, {"title": "INTERNATIONAL / PASSPORT (if international event)", "checks": [{"cat": "Passport", "item": "Passport Number question is asked.", "exp": ""}, {"cat": "Passport", "item": "Passport Issue Date question is asked.", "exp": ""}, {"cat": "Passport", "item": "Passport Expiration Date question is asked.", "exp": ""}, {"cat": "Passport", "item": "Passport Country question is asked.", "exp": ""}]}, {"title": "GUEST AIR", "checks": [{"cat": "Guest Air", "item": "Guest Travel Request enabled if specified.", "exp": "Reg Start Up > 'Are we booking guest air?'"}, {"cat": "Guest Air", "item": "Guest passport fields appear for international events.", "exp": ""}]}, {"title": "DECLINE TRAVEL PATH", "checks": [{"cat": "Decline", "item": "Decline Travel Request option is visible.", "exp": ""}, {"cat": "Decline", "item": "Decline options listed correctly (AOO / Air on Own, Company Plane, Driving, Train, Corporate Jet, etc.).", "exp": "Reg Start Up > 'If not, indicate decline travel options'"}, {"cat": "Decline", "item": "If 'Air on Own', registrant is instructed how to send itineraries.", "exp": "Reg Start Up note"}]}]}, {"id": "s9", "num": 9, "name": "Activities", "title": "ACTIVITIES / SESSIONS — QC", "intro": "Verify every activity/session in the Cvent build against the Activities.Breakouts tab of the Reg Start Up Form. Add a row per activity — copy the activity name into Column A and confirm each detail.", "sections": [{"title": "PER-ACTIVITY CHECKS — repeat the block below for EACH activity", "checks": [{"cat": "[Activity Name]", "item": "Activity name displayed matches Reg Start Up Form exactly (spelling, casing).", "exp": ""}, {"cat": "[Activity Name]", "item": "Start Date & Time correct.", "exp": "Reg Start Up > Activities > Start Date & Time"}, {"cat": "[Activity Name]", "item": "End Date & Time correct.", "exp": "Reg Start Up > Activities > End Date & Time"}, {"cat": "[Activity Name]", "item": "Max Capacity matches Reg Start Up Form.", "exp": ""}, {"cat": "[Activity Name]", "item": "Guests Allowed setting matches Reg Start Up Form.", "exp": ""}, {"cat": "[Activity Name]", "item": "Waitlist enabled/disabled matches Reg Start Up Form.", "exp": ""}, {"cat": "[Activity Name]", "item": "Fee (if any) set correctly.", "exp": ""}, {"cat": "[Activity Name]", "item": "Conditional / sub-questions present and trigger correctly.", "exp": "Reg Start Up > Activities > Conditional Questions"}, {"cat": "[Activity Name]", "item": "Speakers / session materials listed correctly.", "exp": ""}, {"cat": "[Activity Name]", "item": "Activity is assigned to the correct Registration Type(s).", "exp": "Ensure Optional, Included, Auto Associated"}, {"cat": "[Activity Name]", "item": "Activity description matches approved Word doc.", "exp": ""}, {"cat": "[Activity Name]", "item": "Activity image is correct + high-quality.", "exp": ""}, {"cat": "[Activity Name]", "item": "Reporting Label includes activity name + date/time (for back-end reporting).", "exp": ""}, {"cat": "Group Activity", "item": "Group Activities show correct sessions", "exp": ""}, {"cat": "Group Activity", "item": "Ensure Advanced Logic (one or more from each group) with error if you go over under expected amounts", "exp": ""}, {"cat": "Group Activity", "item": "Group activity selection allows for guest if applicable", "exp": ""}, {"cat": "Group Activity", "item": "Group Selections are formatted with proper time/date/titles", "exp": ""}]}, {"title": "SPA / APPOINTMENT-BASED ACTIVITIES (if applicable)", "checks": [{"cat": "Spa", "item": "Spa offered on correct days.", "exp": ""}, {"cat": "Spa", "item": "Treatment options listed (reviving massage, aromatherapy, personalized facial, etc.) match spec.", "exp": ""}, {"cat": "Spa", "item": "Standard spa sub-questions present: therapist preference, appointment time, etc.", "exp": ""}]}, {"title": "GOLF (if applicable)", "checks": [{"cat": "Golf", "item": "Renting/Bringing Clubs Option is present", "exp": ""}, {"cat": "Golf", "item": "Renting Shoes (Y/N) with size chart if applicable", "exp": ""}, {"cat": "Golf", "item": "Handicap is present", "exp": ""}]}, {"title": "GLOBAL ACTIVITY CHECKS", "checks": [{"cat": "Global", "item": "All activities from Reg Start Up Form are present in Cvent (no missing activities).", "exp": ""}, {"cat": "Global", "item": "No extra activities in Cvent that are not on Reg Start Up Form.", "exp": ""}, {"cat": "Global", "item": "Reg-Type assignment matches the X marks in Reg Start Up Form.", "exp": ""}, {"cat": "Global", "item": "Activity capacities and waitlists tested by attempting to over-register.", "exp": ""}]}]}, {"id": "s10", "num": 10, "name": "Emails", "title": "EMAILS / COMMUNICATIONS — QC", "intro": "For each email, send a real test from Cvent and verify in inbox. Check sender, subject, content, attachments, recipients, and merge fields.", "sections": [{"title": "INVITATION EMAIL", "checks": [{"cat": "Invite", "item": "Sender Name & Email correct.", "exp": ""}, {"cat": "Invite", "item": "Subject line correct (spelling, formatting, merge fields).", "exp": ""}, {"cat": "Invite", "item": "Headline + body copy matches approved Word doc.", "exp": ""}, {"cat": "Invite", "item": "Date / location / time zone matches Website and content doc", "exp": ""}, {"cat": "Invite", "item": "Merge fields (First Name, Last Name) populate correctly on test send.", "exp": ""}, {"cat": "Invite", "item": "Registration link works + lands on the correct path.", "exp": ""}, {"cat": "Invite", "item": "Decline link direct to regret form with correct fields", "exp": ""}, {"cat": "Invite", "item": "Sender Reply-To address routes to shared reg mailbox.", "exp": ""}, {"cat": "Invite", "item": "Desktop & Mobile rendering tested (Outlook, Gmail, Apple Mail).", "exp": ""}]}, {"title": "REGISTRATION CONFIRMATION EMAIL", "checks": [{"cat": "Confirmation", "item": "Confirmation email is correct per registration path.", "exp": ""}, {"cat": "Confirmation", "item": "Sender Name correct.", "exp": ""}, {"cat": "Confirmation", "item": "Sender Email correct (shared reg mailbox).", "exp": ""}, {"cat": "Confirmation", "item": "Subject line correct.", "exp": ""}, {"cat": "Confirmation", "item": "Registration Date dynamic field populates correctly.", "exp": ""}, {"cat": "Confirmation", "item": "Registration Type displayed correctly if applicable", "exp": ""}, {"cat": "Confirmation", "item": "All registered fields display correctly (sessions, hotel, travel, special requests).", "exp": ""}, {"cat": "Confirmation", "item": "Contact info (reg email, phone) correct.", "exp": ""}, {"cat": "Confirmation", "item": "Modify Registration link present if modify enabled. Modify link goes to correct page.", "exp": ""}, {"cat": "Confirmation", "item": "Modify Registration link is NOT present if modify disabled.", "exp": ""}, {"cat": "Confirmation", "item": "Add to Calendar link works (.ics file or Google/Outlook).", "exp": ""}, {"cat": "Confirmation", "item": "Confirmation sent to correct shared registration mailbox (active during testing).", "exp": ""}]}, {"title": "REGRET / DECLINE EMAIL", "checks": [{"cat": "Regret", "item": "Regret email created and assigned to correct path.", "exp": ""}, {"cat": "Regret", "item": "Sender / subject / content correct.", "exp": ""}, {"cat": "Regret", "item": "Planner Alert triggered when registrant declines invitation.", "exp": ""}]}, {"title": "REMINDER EMAILS (if used)", "checks": [{"cat": "Reminder", "item": "Reminder email content correct.", "exp": ""}, {"cat": "Reminder", "item": "Reminder scheduled date/time correct.", "exp": ""}, {"cat": "Reminder", "item": "Reminder targets correct audience (registered but not completed, etc.).", "exp": ""}]}, {"title": "ADVANCED EMAIL SETTINGS", "checks": [{"cat": "Advanced", "item": "Additional CC'd email fields are added or removed per Advanced Settings.", "exp": ""}, {"cat": "Advanced", "item": "BCC routing (if used) goes to the correct mailbox.", "exp": ""}, {"cat": "Advanced", "item": "Unsubscribe behavior matches spec.", "exp": ""}]}, {"title": "TOYOTA-SPECIFIC", "checks": [{"cat": "Toyota Only", "item": "Confirmation email includes Trip Name + Event ID (Cvent 5-digit ID) for FCM.", "exp": "Toyota-only requirement"}, {"cat": "Toyota Only", "item": "TravelServices@Toyota.com has been added as an invitee.", "exp": ""}, {"cat": "Toyota Only", "item": "Account Team confirmed they will send invite to TravelServices at launch.", "exp": ""}, {"cat": "Toyota Only", "item": "TravelServices@Toyota.com is added as invitee (Toyota only).", "exp": ""}]}]}, {"id": "s11", "num": 11, "name": "Integrations", "title": "INTEGRATIONS & LINKS — QC", "intro": "Verify every external link, integration, and data feed. Click every hyperlink to confirm destination + open behavior.", "sections": [{"title": "HYPERLINKS — every link on the website", "checks": [{"cat": "Links", "item": "Every navigation link goes to correct page (test each one).", "exp": ""}, {"cat": "Links", "item": "Every body-copy hyperlink resolves to correct URL.", "exp": ""}, {"cat": "Links", "item": "Every CTA button goes to correct destination.", "exp": ""}, {"cat": "Links", "item": "External links open in NEW tab (target=_blank).", "exp": ""}, {"cat": "Links", "item": "Internal links open in SAME tab.", "exp": ""}, {"cat": "Links", "item": "Email links (mailto:) open default email client correctly.", "exp": ""}, {"cat": "Links", "item": "Phone links (tel:) trigger phone dialer on mobile.", "exp": ""}, {"cat": "Links", "item": "Hotel website link works and goes to correct hotel.", "exp": ""}, {"cat": "Links", "item": "Footer links (privacy, terms, support) all work.", "exp": ""}]}, {"title": "AIR PARTNER INTEGRATION (if applicable)", "checks": [{"cat": "Air Partner", "item": "Partner name configured correctly in Cvent.", "exp": "Reg Start Up > Air Partner > Partner Name"}, {"cat": "Air Partner", "item": "Air confirmation emails routed to Partner Reservations Email.", "exp": "Reg Start Up > Partner Reservations Email Address"}, {"cat": "Air Partner", "item": "Internal Air Reservation mailbox is cc'd.", "exp": "Reg Start Up > Internal Air Reservation Email Address"}, {"cat": "Air Partner", "item": "Dedicated air partner phone # listed on Travel page + confirmation.", "exp": "Reg Start Up > Dedicated Phone #"}, {"cat": "Air Partner", "item": "Coordinated with Kristina Krogstad (2-week setup lead time confirmed).", "exp": "Reg Start Up Form note"}]}, {"title": "CALENDARS / EXPORT", "checks": [{"cat": "Calendar", "item": "Add-to-Calendar buttons work (iCal, Google, Outlook).", "exp": ""}, {"cat": "Calendar", "item": "Calendar entry has correct title, dates, time zone, location, description.", "exp": ""}]}, {"title": "PLANNER ALERTS", "checks": [{"cat": "Alerts", "item": "Session capacity alert is turned ON and routed to planner.", "exp": ""}, {"cat": "Alerts", "item": "Hotel room block capacity alert is turned ON and routed to planner.", "exp": ""}, {"cat": "Alerts", "item": "Optional alerts (waitlist, registration milestones) configured as needed.", "exp": ""}]}, {"title": "EVENT TECH ADD-ONS (if applicable)", "checks": [{"cat": "Mobile App", "item": "Mobile app platform configured if specified. Use Mobile App QC form if on", "exp": "Reg Start Up > Mobile App"}, {"cat": "OnArrival", "item": "OnArrival check-in configured if specified.", "exp": "Reg Start Up > OnArrival"}, {"cat": "Survey", "item": "Feedback Survey configured if specified.", "exp": "Reg Start Up > Feedback Survey"}]}]}, {"id": "s12", "num": 12, "name": "Reports", "title": "REPORTS — QC", "intro": "Verify report setup. Reports power downstream operations — bad reports = bad ops.", "sections": [{"title": "REPORT BUILD", "checks": [{"cat": "Reports", "item": "Necessary reports have been created for the event.", "exp": ""}, {"cat": "Reports", "item": "Reports tested with at least one test registration — every column pulls correct value.", "exp": ""}, {"cat": "Reports", "item": "Activity/Session dates/times included in Session Code (so reports are readable).", "exp": ""}, {"cat": "Reports", "item": "Activity/Session conditional questions include activity/session name + date in reporting field.", "exp": ""}, {"cat": "Reports", "item": "Internal / back-end fields are pulling into reports.", "exp": ""}, {"cat": "Reports", "item": "Hotel arrival / departure data pulls correctly per registrant.", "exp": ""}, {"cat": "Reports", "item": "Travel arrival / departure data pulls correctly.", "exp": ""}, {"cat": "Reports", "item": "Dietary, medical, special requests pull into reports.", "exp": ""}]}, {"title": "PERMISSIONS / VISIBILITY", "checks": [{"cat": "Permissions", "item": "All reports created are set to 'View by all users'", "exp": ""}, {"cat": "Permissions", "item": "Sensitive PII reports (passport, DOB, CC) restricted appropriately.", "exp": ""}]}]}];
+</script>
+<script>
+(function(){
+"use strict";
+const STATUSES=["Not Started","In Progress","Pass","Fail","Blocked","N/A"];
+const PILLS=STATUSES.slice(0,5);
+const SCLS={"Not Started":"ns","In Progress":"prog","Pass":"pass","Fail":"fail","Blocked":"blocked","N/A":"na"};
+const SEVS=["Critical","High","Medium","Low"];
+const STORE="cvent-qc-checklist:v1";
+const CFG=window.QC_CONFIG||{};
+const CLOUD=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey&&!/YOUR-/.test(CFG.supabaseUrl+CFG.supabaseAnonKey));
+
+const NAV=[
+ {num:1,id:"s1",name:"Start Here",desc:"How to use this checklist, status and severity keys."},
+ {num:2,id:"s2",name:"Project Cover",desc:"Project info, URLs, test credentials, reviewer sign-off."},
+ {num:3,id:"s3",name:"Event Settings",desc:"Cvent back-end settings: reg types, deadlines, room blocks, project number, capacities."},
+ {num:4,id:"s4",name:"Design vs Figma",desc:"Visual QC: fonts, spacing, colors, graphics, mobile, browser compatibility."},
+ {num:5,id:"s5",name:"Website Pages",desc:"Page-by-page content QC (Welcome, Stay, Agenda, Activities, Travel, FAQ, etc.) against approved Word doc."},
+ {num:6,id:"s6",name:"Reg Path",desc:"One full checklist per registration type (Winner, Host, Staff, Other). Tests every question, logic branch, and required field."},
+ {num:7,id:"s7",name:"Hotel",desc:"Hotel request page, room block, CC guarantee, cancellation, decline options."},
+ {num:8,id:"s8",name:"Travel",desc:"Air request page, airports, dates, passport fields, decline options, air partner integration."},
+ {num:9,id:"s9",name:"Activities",desc:"Per-activity QC: capacity, dates/times, conditional questions, reg-type assignment, reporting labels."},
+ {num:10,id:"s10",name:"Emails",desc:"Confirmation, regret, invite, reminder emails. Sender, subject, content, attachments, cc/bcc, FCM/Toyota requirements."},
+ {num:11,id:"s11",name:"Integrations",desc:"Hyperlinks, air partner email feeds, planner alerts, Toyota TravelServices, REAL ID, calendars, surveys."},
+ {num:12,id:"s12",name:"Reports",desc:"Report build verification, fields pulling correctly, view permissions, session-code labels."},
+ {num:13,id:"s13",name:"Final Sign-Off",desc:"Dashboard summary, GO / NO-GO, and builder, AC and AM sign-off."}
+];
+const STEP={}; DATA.forEach(s=>STEP[s.id]=s);
+STEP.s6.intro="Team reviews one path unless specified per accounts prior to review. Use “Add reg type” to create a full copy of this checklist for each registration type (Winner, Host, Staff, Other, etc.) and name it to match. Then walk through registration as that reg type — test every required field, every conditional/sub-question, every path through guest vs. no-guest. Use a unique test email for each reg type.";
+STEP.s9.intro="Verify every activity/session in the Cvent build against the Activities.Breakouts tab of the Reg Start Up Form. Use “Add activity” to repeat the per-activity block for each activity, name it, and confirm each detail.";
+STEP.s5.intro=STEP.s5.intro.replace(" — "," ").replace("prior For","prior. For");
+
+const COVER=[
+ ["Project Number (26XXX)","Live Website URL"],["Event Name","Cvent Event ID"],["Client / Account","Figma Design File URL"],
+ ["Account Manager","Approved Content Doc URL"],["Account Coordinator","Reg Start Up Form URL"],["Web Builder","Jira Ticket URL"],
+ ["Designer (ICT)","Project Folder URL"],["Air Partner (if applicable)","Test Email #1"],["Event Start Date","Test Email #2"],
+ ["Event End Date","Test Email #3"],["Event Time Zone","Browser(s) Tested"],["Registration Open Date","Mobile Device(s) Tested"],
+ ["Registration Close Date","QC Start Date"],["Number of Registration Types","Target Go-Live Date"],["Reg Types (list)","Final Sign-Off Date"]
+];
+const DATEF=new Set(["Event Start Date","Event End Date","Registration Open Date","Registration Close Date","QC Start Date","Target Go-Live Date","Final Sign-Off Date"]);
+const ROLES=["Web Builder","Account Coordinator","Account Manager","Client / Project Owner (optional)"];
+
+/* ---------- state ---------- */
+function fresh(){return {v:1,reviewer:"",cover:{},checks:{},custom:{},regTypes:[{id:"rt1",name:"Main path"}],activities:[{id:"ac1",name:"Activity 1"}],signoff:{},attest:false,seq:2};}
+function load(){try{const r=localStorage.getItem(STORE);if(!r)return null;return normalize(JSON.parse(r));}catch(e){return null;}}
+function normalize(o){
+  const f=fresh(); if(!o||typeof o!=="object")return f;
+  const s=Object.assign(f,o);
+  if(!Array.isArray(s.regTypes)||!s.regTypes.length)s.regTypes=fresh().regTypes;
+  if(!Array.isArray(s.activities)||!s.activities.length)s.activities=fresh().activities;
+  ["cover","checks","custom","signoff"].forEach(k=>{if(!s[k]||typeof s[k]!=="object")s[k]={};});
+  s.seq=Math.max(+s.seq||2,2);
+  return s;
+}
+let S=CLOUD?fresh():(load()||fresh());
+if(CLOUD){try{S.reviewer=localStorage.getItem(STORE+":reviewer")||"";}catch(e){}}
+let saveT=null;
+function persist(){
+  if(CLOUD){try{localStorage.setItem(STORE+":reviewer",S.reviewer||"");}catch(e){}return;}
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>{
+    try{localStorage.setItem(STORE,JSON.stringify(S));note("Saved in this browser · "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}));}
+    catch(e){note("Couldn’t save in this browser. Use Save file to keep your work.");}
+  },250);
+}
+function note(t){document.getElementById("savedNote").textContent=t;}
+function uid(p){return p+Date.now().toString(36).slice(-4)+Math.random().toString(36).slice(2,6);}
+/* Every change goes through these three. Without Supabase they save to this browser. */
+function saveCheck(key){if(!CLOUD)return persist();Cloud.queueCheck(key);}
+function saveMeta(fields,patch){if(!CLOUD)return persist();Cloud.queueMeta(fields,patch);}
+function deleteChecks(k,isPrefix){if(!CLOUD)return persist();Cloud.remove(k,isPrefix);}
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEEP=["FAQ","CC","ID","REAL","URL","CTA","ICT","FCM"];
+function sentence(t){
+  let s=t.toLowerCase();
+  s=s.charAt(0).toUpperCase()+s.slice(1);
+  s=s.replace(/\btoyota\b/g,"Toyota").replace(/\bfigma\b/g,"Figma");
+  KEEP.forEach(k=>{s=s.replace(new RegExp("\\b"+k.toLowerCase()+"\\b","g"),k);});
+  return s;
+}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2600);}
+function isUrl(v){return /^https?:\/\/\S+$/i.test((v||"").trim());}
+
+/* ---------- model ---------- */
+// Returns groups: [{inst, name, kind, sections:[{secIdx,title,checks:[...]}]}]
+function stepModel(sid){
+  const st=STEP[sid]; const groups=[];
+  const mk=(inst,secIdx,sec,name)=>{
+    const checks=sec.checks.map((c,i)=>({key:sid+"|"+inst+"|"+secIdx+"."+i,cat:(sid==="s9"&&inst!=="-")?name:c.cat,item:c.item,exp:c.exp,custom:false}));
+    (S.custom[sid+"|"+inst+"|"+secIdx]||[]).forEach(c=>checks.push({key:sid+"|"+inst+"|c"+c.id,cat:c.cat,item:c.item,exp:c.exp,custom:true,cid:c.id,ckey:sid+"|"+inst+"|"+secIdx}));
+    let title=sec.title;
+    if(sid==="s9"&&secIdx===0)title="Per-activity checks";
+    return {secIdx,title:sentence(title),checks};
+  };
+  if(sid==="s6"){
+    S.regTypes.forEach(rt=>groups.push({inst:rt.id,name:rt.name,kind:"rt",sections:st.sections.map((sec,i)=>mk(rt.id,i,sec,rt.name))}));
+  }else if(sid==="s9"){
+    S.activities.forEach(a=>groups.push({inst:a.id,name:a.name,kind:"ac",sections:[mk(a.id,0,st.sections[0],a.name)]}));
+    groups.push({inst:"-",name:null,kind:"",sections:st.sections.slice(1).map((sec,i)=>mk("-",i+1,sec))});
+  }else{
+    groups.push({inst:"-",name:null,kind:"",sections:st.sections.map((sec,i)=>mk("-",i,sec))});
+  }
+  return groups;
+}
+function stepChecks(sid){const out=[];stepModel(sid).forEach(g=>g.sections.forEach(s=>s.checks.forEach(c=>{c.group=g;c.section=s;out.push(c);})));return out;}
+function allChecks(){let out=[];DATA.forEach(s=>{stepChecks(s.id).forEach(c=>{c.sid=s.id;out.push(c);});});return out;}
+function cs(key){return S.checks[key]||{};}
+function statusOf(key){return cs(key).status||"Not Started";}
+function tally(list){const t={total:list.length};STATUSES.forEach(s=>t[s]=0);list.forEach(c=>t[statusOf(c.key)]++);return t;}
+function verdict(t){const denom=t.total-t["N/A"];const pct=denom>0?t.Pass/denom:0;return {pct,go:t.Fail===0&&pct>=0.95};}
+
+/* ---------- rail ---------- */
+function barHTML(t){
+  if(!t.total)return '<span class="bar"></span>';
+  const seg=(k,c)=>t[k]?'<i class="b-'+c+'" style="width:'+(t[k]/t.total*100)+'%"></i>':"";
+  return '<span class="bar" aria-hidden="true">'+seg("Pass","pass")+seg("N/A","na")+seg("In Progress","prog")+seg("Blocked","blocked")+seg("Fail","fail")+'</span>';
+}
+function renderRail(){
+  const cur=current();
+  document.getElementById("steps").innerHTML=NAV.map(n=>{
+    let extra="",bar="";
+    if(STEP[n.id]){const t=tally(stepChecks(n.id));const done=t.total-t["Not Started"]-t["In Progress"];extra='<span class="c">'+done+"/"+t.total+"</span>";bar=barHTML(t);}
+    else if(n.id==="s13"){const t=tally(allChecks());const v=verdict(t);extra='<span class="c" style="color:var(--'+(v.go?"pass":"fail")+');font-weight:700">'+(v.go?"GO":"NO-GO")+"</span>";}
+    return '<li><a href="#'+n.id+'"'+(cur===n.id?' aria-current="page"':"")+'><span class="n">'+n.num+'</span><span class="t">'+esc(n.name)+"</span>"+extra+(bar?'<span class="bar-wrap" style="grid-column:2/4">'+bar+"</span>":"")+"</a></li>";
+  }).join("");
+  const ev=(S.cover["Event Name"]||"").trim(),pn=(S.cover["Project Number (26XXX)"]||"").trim();
+  document.getElementById("brandSub").textContent=(pn||ev)?[pn,ev].filter(Boolean).join(" "):"Website & registration build";
+  const nav=NAV.find(n=>n.id===cur);document.getElementById("menuLabel").textContent=nav?nav.num+". "+nav.name:"Steps";
+}
+
+/* ---------- routing ---------- */
+function current(){const h=(location.hash||"").slice(1).split("/")[0];return NAV.some(n=>n.id===h)?h:"s1";}
+let filter="all";
+function render(focusKey){
+  if(CLOUD&&!Cloud.isOpen()){Cloud.gate();return;}
+  document.getElementById("app").classList.remove("gate");
+  const sid=current(); const v=document.getElementById("view");
+  if(sid==="s1")v.innerHTML=viewStart();
+  else if(sid==="s2")v.innerHTML=viewCover();
+  else if(sid==="s13")v.innerHTML=viewDash();
+  else v.innerHTML=viewStep(sid);
+  renderRail();
+  if(focusKey){const el=document.querySelector('.check[data-key="'+CSS.escape(focusKey)+'"]');if(el){const d=el.querySelector("details");if(d)d.open=true;el.scrollIntoView({block:"center"});el.classList.add("flash");}}
+}
+let lastSid=null;
+window.addEventListener("hashchange",()=>{
+  const parts=(location.hash||"").slice(1).split("/");const sid=current();
+  if(sid!==lastSid){filter="all";}
+  const focusKey=parts[1]?decodeURIComponent(parts.slice(1).join("/")):null;
+  render(focusKey);
+  if(!focusKey&&sid!==lastSid)window.scrollTo(0,0);
+  lastSid=sid; closeNav();
+});
+
+/* ---------- views ---------- */
+function head(sid,sub){const n=NAV.find(x=>x.id===sid);return '<header class="stephead"><div class="num">Step '+n.num+' of 13</div><h2>'+esc(n.name)+'</h2><p class="sub">'+esc(sub||n.desc)+"</p></header>";}
+
+function viewStart(){
+  const st=[["Not Started","Have not begun this check yet."],["In Progress","Currently testing this item."],["Pass","Item matches the approved source exactly — no issues."],["Fail","Item does NOT match approved source. Log details in the Notes field."],["Blocked","Cannot complete this check — missing access, content, or dependency."],["N/A","Not applicable to this event/registration path. Switch on the N/A toggle in front of the check’s title; it collapses to one line and stays out of the pass rate."]];
+  const sv=[["Critical","Blocks launch — broken registration path, wrong dates, missing required questions, wrong pricing, broken integration."],["High","Visible to attendees, must fix before go-live — wrong text, wrong reg type assignment, broken link, missing email."],["Medium","Fix before go-live but does not block — formatting, spacing, minor wording, image swap."],["Low","Polish — nice to fix but not blocking — minor copy nit, optional improvement."]];
+  const before=["Start a fresh checklist for this project (or open the saved file if one exists) and save it to the project folder as [ProjectNumber]_[EventName]_QC_v1.","Fill out step 2, Project Cover, with project number, event name, URLs, and reviewer info.","Open all three reference docs side-by-side with the live Cvent build: Figma file, approved content Word doc, completed Reg Start Up Form.","Test in an incognito/private browser window so cached registrations don’t interfere.","Use real test email addresses you can access (one per registration type) — do NOT use production accounts.","Test on DESKTOP and MOBILE for every registration path."];
+  return '<header class="stephead"><div class="num">Step 1 of 13</div><h2>Website &amp; registration QC</h2></header>'+
+  '<div class="prose"><p>An exhaustive, line-by-line quality check for any Cvent website + registration build. It is designed so an account team member who is NOT familiar with the event can still validate every page, question, integration, and email against three sources of truth: (1) the Figma-approved design, (2) the approved Word content document, and (3) the completed Registration Start Up Form.</p>'+
+  '<h3 class="k" style="margin-top:22px">Before you start</h3><ol class="before">'+before.map(b=>"<li>"+esc(b)+"</li>").join("")+"</ol></div>"+
+  '<div class="keygrid"><div><h3 class="k">Status key</h3><ul class="keylist">'+st.map(s=>'<li><span class="chip s-'+SCLS[s[0]]+'">'+s[0]+"</span><span>"+esc(s[1])+"</span></li>").join("")+"</ul></div>"+
+  '<div><h3 class="k">Severity key</h3><p style="margin:4px 0 0;color:var(--ink3);font-size:13px">Use only when status is Fail.</p><ul class="keylist">'+sv.map(s=>'<li><span class="chip v-'+s[0]+'">'+s[0]+"</span><span>"+esc(s[1])+"</span></li>").join("")+"</ul></div></div>"+
+  '<h3 class="k" style="margin-top:34px">Steps</h3><ul class="index">'+NAV.slice(1).map(n=>'<li><a href="#'+n.id+'"><span class="nn">'+n.num+'</span><span class="nm">'+esc(n.name)+'</span><span class="d">'+esc(n.desc)+"</span></a></li>").join("")+"</ul>"+
+  '<p style="margin-top:28px"><a class="btn primary" style="text-decoration:none;display:inline-block" href="#s2">Fill in the project cover</a></p>';
+}
+
+function viewCover(){
+  let h=head("s2");
+  h+='<div class="cover">';
+  const field=lab=>{
+    const val=S.cover[lab]||"";const id="cv-"+lab.replace(/\W+/g,"-");
+    const url=/URL$/.test(lab);
+    const type=DATEF.has(lab)?"date":/Email #/.test(lab)?"email":url?"url":"text";
+    let inp='<input id="'+id+'" type="'+type+'" data-cover="'+esc(lab)+'" value="'+esc(val)+'"'+(url?' placeholder="https://"':"")+">";
+    if(url)inp='<div class="urlrow">'+inp+'<a class="open" data-for="'+id+'" target="_blank" rel="noopener" href="'+(isUrl(val)?esc(val.trim()):"#")+'"'+(isUrl(val)?"":" hidden")+'>Open ↗</a></div>';
+    return '<div class="f"><label for="'+id+'">'+esc(lab)+"</label>"+inp+"</div>";
+  };
+  COVER.forEach(r=>{h+=field(r[0])+field(r[1]);});
+  h+="</div>";
+  const t=tally(allChecks());const v=verdict(t);
+  h+='<h3 class="dh">QC summary</h3>'+countsHTML(t,v)+'<p style="margin-top:12px"><a href="#s13">Open the full dashboard</a></p>';
+  return h;
+}
+
+function countsHTML(t,v){
+  const cells=[["Total checks",t.total,""],["Pass",t.Pass,"k-pass"],["Fail",t.Fail,"k-fail"],["Blocked",t.Blocked,"k-blocked"],["In Progress",t["In Progress"],"k-prog"],["Not Started",t["Not Started"],""],["N/A",t["N/A"],""]];
+  return '<div class="counts">'+cells.map(c=>'<div class="'+c[2]+'"><strong>'+c[1]+"</strong><span>"+c[0]+"</span></div>").join("")+"</div>"+
+   '<p class="rule">% Pass (excl. N/A): <b>'+(v.pct*100).toFixed(1)+"%</b> · Status: <b style=\"color:var(--"+(v.go?"pass":"fail")+')">'+(v.go?"GO":"NO-GO")+"</b></p>";
+}
+
+function checkHTML(c){
+  const d=cs(c.key);const s=d.status||"Not Started";
+  const exp=d.exp!=null&&d.exp!==""?d.exp:c.exp;
+  const fid=c.key.replace(/[^\w]/g,"_");
+  const sw=na=>'<button type="button" class="applies" role="switch" aria-checked="'+na+'" aria-label="Not applicable" title="'+(na?"Turn off to test this check again":"Turn on if this check doesn\u2019t apply to this event")+'"><span class="sw" aria-hidden="true"></span>N/A</button>';
+  const hid=(filter!=="all"&&filter!==s?" hidden":"");
+  if(s==="N/A"){
+    return '<div class="check is-na" data-key="'+esc(c.key)+'" data-s="N/A"'+hid+'><div class="naline">'+sw(true)+'<span class="natext" title="'+esc(c.item)+'">'+esc(c.item||"(untitled check)")+'</span></div></div>';
+  }
+  let h='<div class="check" data-key="'+esc(c.key)+'" data-s="'+s+'"'+hid+'><div class="crow"><div>';
+  h+='<div class="titleline">'+sw(false)+'<p class="item">'+esc(c.item||"(untitled check)")+"</p></div>";
+  if(exp)h+='<p class="exp"><b>Expected:</b> '+esc(exp)+"</p>";
+  h+='</div><div class="side"><div class="statuses" role="group" aria-label="Status">'+PILLS.map(x=>'<button type="button" data-v="'+x+'" aria-pressed="'+(x===s)+'">'+x+"</button>").join("")+'</div></div></div>';
+  h+='<div class="meta">'+metaHTML(d)+"</div>";
+  h+='<details class="more"><summary>Details</summary><div class="fields">';
+  if(c.custom){
+    h+='<div class="f"><label for="cat_'+fid+'">Category / page</label><input id="cat_'+fid+'" data-cf="cat" value="'+esc(c.cat)+'"></div>';
+    h+='<div class="f w3" style="grid-column:span 3"><label for="it_'+fid+'">Item to check</label><input id="it_'+fid+'" data-cf="item" value="'+esc(c.item)+'"></div>';
+    h+='<div class="f w4"><label for="ex_'+fid+'">Expected (from approved source)</label><textarea id="ex_'+fid+'" data-cf="exp">'+esc(c.exp)+"</textarea></div>";
+  }else{
+    h+='<div class="f w4"><label for="ex_'+fid+'">Expected (from approved source)</label><textarea id="ex_'+fid+'" data-f="exp" placeholder="'+esc(c.exp||"Paste the expected text from the approved source")+'">'+esc(d.exp!=null?d.exp:c.exp)+"</textarea></div>";
+  }
+  h+='<div class="f w4"><label for="see_'+fid+'">What I see in the build</label><textarea id="see_'+fid+'" data-f="see">'+esc(d.see||"")+"</textarea></div>";
+  h+='<div class="f"><label for="rv_'+fid+'">Reviewer</label><input id="rv_'+fid+'" data-f="reviewer" value="'+esc(d.reviewer||"")+'"></div>';
+  h+='<div class="f"><label for="dt_'+fid+'">Date checked</label><input type="date" id="dt_'+fid+'" data-f="date" value="'+esc(d.date||"")+'"></div>';
+  h+='<div class="f w2"><label for="sv_'+fid+'">Severity if fail</label><select id="sv_'+fid+'" data-f="sev"'+(s==="Fail"?"":" disabled")+'><option value="">—</option>'+SEVS.map(x=>'<option'+(d.sev===x?" selected":"")+">"+x+"</option>").join("")+"</select></div>";
+  h+='<div class="f w4"><label for="nt_'+fid+'">Notes / issue description</label><textarea id="nt_'+fid+'" data-f="notes">'+esc(d.notes||"")+"</textarea></div>";
+  if(c.custom)h+='<div class="rm"><button type="button" class="btn ghost danger" data-act="rmrow" data-ckey="'+esc(c.ckey)+'" data-cid="'+esc(c.cid)+'">Remove this row</button></div>';
+  h+="</div></details></div>";
+  return h;
+}
+function metaHTML(d){
+  const bits=[];
+  if(d.status==="Fail"&&d.sev)bits.push('<span class="sev '+d.sev+'">'+d.sev+"</span>");
+  if(d.reviewer)bits.push("<span>"+esc(d.reviewer)+"</span>");
+  if(d.date)bits.push("<span>"+esc(d.date)+"</span>");
+  if(d.notes)bits.push("<span>Note: "+esc(d.notes.length>90?d.notes.slice(0,90)+"…":d.notes)+"</span>");
+  return bits.join("");
+}
+
+function viewStep(sid){
+  const n=NAV.find(x=>x.id===sid);const st=STEP[sid];
+  const sub=st.title.includes(" — ")?st.title.split(" — ").slice(1).join(" — "):n.desc;
+  let h=head(sid,n.desc)+'<p class="intro">'+esc(st.intro)+"</p>";
+  const groups=stepModel(sid);const list=[];groups.forEach(g=>g.sections.forEach(s=>s.checks.forEach(c=>list.push(c))));
+  const t=tally(list);
+  h+='<div class="toolbar"><label class="sr" for="filter">Show</label><select id="filter"><option value="all">All statuses ('+t.total+")</option>"+STATUSES.map(s=>'<option value="'+s+'"'+(filter===s?" selected":"")+">"+s+" ("+t[s]+")</option>").join("")+"</select>";
+  if(sid==="s6")h+='<button class="btn" data-act="addrt">Add reg type</button>';
+  if(sid==="s9")h+='<button class="btn" data-act="addac">Add activity</button>';
+  h+='<span class="spacer"></span><span class="stat" id="stepStat">'+t.Pass+" pass · "+t.Fail+" fail · "+t["Not Started"]+' not started</span><button class="btn" data-act="markpass"'+(t["Not Started"]?"":" disabled")+">Mark not started as Pass</button></div>";
+  groups.forEach(g=>{
+    if(g.kind){
+      const many=(g.kind==="rt"?S.regTypes:S.activities).length>1;
+      h+='<section class="group"><div class="grouphead"><span class="lbl">'+(g.kind==="rt"?"Reg type":"Activity")+'</span><input aria-label="'+(g.kind==="rt"?"Registration type name":"Activity name")+'" data-rename="'+g.kind+'" data-inst="'+g.inst+'" value="'+esc(g.name)+'"><button class="btn" data-act="rmgroup" data-kind="'+g.kind+'" data-inst="'+g.inst+'"'+(many?"":" disabled title=\"At least one is required\"")+">Remove</button></div><div class=\"sections\">";
+    }else if(sid==="s9"){h+='<section class="group" style="margin-top:34px"><div>';}
+    g.sections.forEach(sec=>{
+      const st2=tally(sec.checks);
+      h+='<div class="section"><h3>'+esc(sec.title)+"<span>"+(st2.Pass+st2["N/A"])+" of "+st2.total+" done</span></h3>";
+      h+=sec.checks.map(checkHTML).join("");
+      h+='<button class="btn ghost addrow" data-act="addrow" data-ckey="'+sid+"|"+g.inst+"|"+sec.secIdx+'" data-cat="'+esc(g.kind==="ac"?g.name:(sec.checks[0]?sec.checks[0].cat:""))+'">+ Add a row</button></div>';
+    });
+    if(g.kind||sid==="s9")h+="</div></section>";
+  });
+  if(filter!=="all"&&!t[filter])h+='<p class="empty">No checks are marked '+esc(filter)+' in this step. <a href="#" data-act="clearfilter">Show all checks</a></p>';
+  return h;
+}
+
+function viewDash(){
+  const all=allChecks();const t=tally(all);const v=verdict(t);
+  let h=head("s13");
+  const why=[];
+  if(t.Fail)why.push("<b>"+t.Fail+" open fail"+(t.Fail>1?"s":"")+"</b> must be resolved");
+  if(v.pct<0.95)why.push("pass rate is <b>"+(v.pct*100).toFixed(1)+"%</b>, needs 95%");
+  h+='<div class="verdict"><div class="stamp '+(v.go?"go":"nogo")+'">'+(v.go?"GO":"NO-GO")+'</div><div><div class="why">'+(v.go?"<b>Cleared to go live.</b> No open fails and "+(v.pct*100).toFixed(1)+"% of applicable checks pass.":"Not ready: "+why.join(" and ")+".")+'</div><div class="rule">Rule: no fails and at least 95% passing, not counting N/A.</div></div></div>';
+  h+=countsHTML(t,v);
+  h+='<h3 class="dh">By step</h3><div class="tablewrap"><table><thead><tr><th>Step</th><th class="num">Checks</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Blocked</th><th class="num">In progress</th><th class="num">Not started</th><th class="num">N/A</th><th>Progress</th></tr></thead><tbody>';
+  DATA.forEach(s=>{const tt=tally(stepChecks(s.id));const n=NAV.find(x=>x.id===s.id);
+    h+='<tr><td><a href="#'+s.id+'">'+n.num+". "+esc(n.name)+'</a></td><td class="num">'+tt.total+'</td><td class="num">'+tt.Pass+'</td><td class="num">'+tt.Fail+'</td><td class="num">'+tt.Blocked+'</td><td class="num">'+tt["In Progress"]+'</td><td class="num">'+tt["Not Started"]+'</td><td class="num">'+tt["N/A"]+"</td><td>"+barHTML(tt)+"</td></tr>";});
+  h+="</tbody></table></div>";
+  const rank={Critical:0,High:1,Medium:2,Low:3};
+  const open=all.filter(c=>{const s=statusOf(c.key);return s==="Fail"||s==="Blocked";}).sort((a,b)=>{
+    const sa=statusOf(a.key),sb=statusOf(b.key);if(sa!==sb)return sa==="Fail"?-1:1;
+    return (rank[cs(a.key).sev]??4)-(rank[cs(b.key).sev]??4);});
+  h+='<h3 class="dh">Open fails and blocked items</h3>';
+  if(!open.length)h+='<p style="color:var(--ink2)">Nothing is failing or blocked.</p>';
+  else{
+    h+='<div class="tablewrap"><table class="issues"><thead><tr><th>Status</th><th>Severity</th><th>Step</th><th>Check</th><th>Notes</th></tr></thead><tbody>';
+    open.forEach(c=>{const d=cs(c.key);const s=statusOf(c.key);const n=NAV.find(x=>x.id===c.sid);
+      const where=n.name+(c.group.name?" · "+c.group.name:"");
+      h+='<tr><td><span class="chip s-'+SCLS[s]+'">'+s+"</span></td><td>"+(s==="Fail"&&d.sev?'<span class="chip v-'+d.sev+'">'+d.sev+"</span>":(s==="Fail"?'<span style="color:var(--ink3)">Not set</span>':""))+"</td><td>"+esc(where)+'</td><td><a href="#'+c.sid+"/"+encodeURIComponent(c.key)+'">'+esc(c.item)+"</a></td><td>"+esc(d.notes||"")+"</td></tr>";});
+    h+="</tbody></table></div>";
+  }
+  h+='<h3 class="dh">Sign-off</h3><div class="tablewrap"><table class="signoff"><thead><tr><th>Role</th><th>Name</th><th>Signature / initials</th><th>Date</th></tr></thead><tbody>';
+  ROLES.forEach((r,i)=>{const so=S.signoff[r]||{};h+="<tr><td>"+esc(r)+'</td><td><input aria-label="'+esc(r)+' name" data-so="'+i+'" data-k="name" value="'+esc(so.name||"")+'"></td><td><input aria-label="'+esc(r)+' initials" data-so="'+i+'" data-k="sig" value="'+esc(so.sig||"")+'"></td><td><input type="date" aria-label="'+esc(r)+' date" data-so="'+i+'" data-k="date" value="'+esc(so.date||"")+'"></td></tr>';});
+  h+="</tbody></table></div>";
+  h+='<h3 class="dh">Final attestation</h3><label class="attest"><input type="checkbox" id="attest"'+(S.attest?" checked":"")+'><span>By signing above, the Account Manager confirms: (a) every applicable item in steps 3–12 is marked Pass or N/A; (b) the build has been tested across required browsers and devices; (c) the event is cleared to go live.</span></label>';
+  return h;
+}
+
+/* ---------- events ---------- */
+const view=document.getElementById("view");
+function refreshRow(el,key){
+  const d=cs(key);const s=d.status||"Not Started";el.dataset.s=s;
+  el.querySelectorAll(".statuses button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===s)));
+  el.querySelector(".meta").innerHTML=metaHTML(d);
+  const sev=el.querySelector('[data-f="sev"]');if(sev)sev.disabled=s!=="Fail";
+  const rv=el.querySelector('[data-f="reviewer"]');if(rv&&document.activeElement!==rv)rv.value=d.reviewer||"";
+  const dt=el.querySelector('[data-f="date"]');if(dt&&document.activeElement!==dt)dt.value=d.date||"";
+  if(filter!=="all")el.hidden=filter!==s;
+}
+function refreshCounts(){
+  const sid=current();if(!STEP[sid])return renderRail();
+  const list=stepChecks(sid);const t=tally(list);
+  const stat=document.getElementById("stepStat");if(stat)stat.textContent=t.Pass+" pass · "+t.Fail+" fail · "+t["Not Started"]+" not started";
+  const f=document.getElementById("filter");if(f)[...f.options].forEach(o=>{o.textContent=o.value==="all"?"All statuses ("+t.total+")":o.value+" ("+t[o.value]+")";});
+  const mp=view.querySelector('[data-act="markpass"]');if(mp)mp.disabled=!t["Not Started"];
+  document.querySelectorAll(".section").forEach(sec=>{
+    const keys=[...sec.querySelectorAll(".check")].map(e=>e.dataset.key);const tt=tally(keys.map(k=>({key:k})));
+    const sp=sec.querySelector("h3 span");if(sp)sp.textContent=(tt.Pass+tt["N/A"])+" of "+tt.total+" done";
+  });
+  renderRail();
+}
+function toggleApplies(row){
+  const key=row.dataset.key;const d=Object.assign({},cs(key));
+  if((d.status||"Not Started")==="N/A"){d.status=d.prev&&d.prev!=="N/A"?d.prev:"Not Started";delete d.prev;}
+  else{d.prev=d.status||"Not Started";d.status="N/A";const me=(S.reviewer||"").trim();if(me){d.reviewer=me;d.date=today();}delete d.sev;}
+  S.checks[key]=d;saveCheck(key);
+  const c=stepChecks(current()).find(x=>x.key===key);if(!c)return;
+  const tmp=document.createElement("div");tmp.innerHTML=checkHTML(c);const nr=tmp.firstChild;row.replaceWith(nr);
+  const b=nr.querySelector(".applies");if(b)b.focus();
+  refreshCounts();
+}
+function setStatus(key,s){
+  const d=Object.assign({},cs(key));d.status=s;
+  const me=(S.reviewer||"").trim();
+  if(me&&s!=="Not Started"){d.reviewer=me;d.date=today();}
+  if(s!=="Fail")delete d.sev;
+  S.checks[key]=d;saveCheck(key);
+}
+
+view.addEventListener("click",e=>{
+  const sb=e.target.closest(".statuses button");
+  if(sb){const row=sb.closest(".check");setStatus(row.dataset.key,sb.dataset.v);refreshRow(row,row.dataset.key);refreshCounts();return;}
+  const ap=e.target.closest(".applies");
+  if(ap){const row=ap.closest(".check");toggleApplies(row);return;}
+  const a=e.target.closest("[data-act]");if(!a)return;
+  const act=a.dataset.act;const sid=current();
+  if(act==="clearfilter"){e.preventDefault();filter="all";render();}
+  else if(act==="markpass"){
+    const list=stepChecks(sid).filter(c=>statusOf(c.key)==="Not Started");
+    if(!list.length)return;
+    if(!confirm("Mark "+list.length+" not-started check"+(list.length>1?"s":"")+" in this step as Pass?"))return;
+    list.forEach(c=>setStatus(c.key,"Pass"));render();toast(list.length+" checks marked Pass");
+  }
+  else if(act==="addrow"){
+    const ck=a.dataset.ckey;const id=uid("r");
+    (S.custom[ck]=S.custom[ck]||[]).push({id,cat:a.dataset.cat||"",item:"",exp:""});
+    saveMeta(["custom"]);const key=ck.split("|").slice(0,2).join("|")+"|c"+id;
+    filter="all";render(key);const inp=document.querySelector('.check[data-key="'+CSS.escape(key)+'"] [data-cf="item"]');if(inp)inp.focus();
+  }
+  else if(act==="rmrow"){
+    if(!confirm("Remove this row and anything entered for it?"))return;
+    const ck=a.dataset.ckey,cid=a.dataset.cid;
+    S.custom[ck]=(S.custom[ck]||[]).filter(r=>r.id!==cid);
+    const rk=ck.split("|").slice(0,2).join("|")+"|c"+cid;delete S.checks[rk];deleteChecks(rk,false);saveMeta(["custom"]);render();
+  }
+  else if(act==="addrt"||act==="addac"){
+    const isRt=act==="addrt";const arr=isRt?S.regTypes:S.activities;const id=uid(isRt?"rt":"ac");
+    const name=isRt?"Reg type "+(arr.length+1):"Activity "+(arr.length+1);
+    arr.push({id,name});saveMeta([isRt?"regTypes":"activities"]);render();
+    const inp=document.querySelector('[data-inst="'+id+'"][data-rename]');if(inp){inp.scrollIntoView({block:"start"});inp.focus();inp.select();}
+    toast((isRt?"Reg type":"Activity")+" added with "+stepChecks(sid).filter(c=>c.key.split("|")[1]===id).length+" checks");
+  }
+  else if(act==="rmgroup"){
+    const isRt=a.dataset.kind==="rt";const arr=isRt?S.regTypes:S.activities;if(arr.length<2)return;
+    const inst=a.dataset.inst;const g=arr.find(x=>x.id===inst);
+    if(!confirm("Remove “"+g.name+"” and all of its check results?"))return;
+    const pre=sid+"|"+inst+"|";
+    Object.keys(S.checks).forEach(k=>{if(k.startsWith(pre))delete S.checks[k];});
+    Object.keys(S.custom).forEach(k=>{if(k.startsWith(pre))delete S.custom[k];});
+    if(isRt)S.regTypes=arr.filter(x=>x.id!==inst);else S.activities=arr.filter(x=>x.id!==inst);
+    deleteChecks(pre,true);saveMeta(["custom",isRt?"regTypes":"activities"]);render();
+  }
+});
+view.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="filter"){filter=t.value;render();return;}
+  if(t.id==="attest"){S.attest=t.checked;saveMeta(["attest"]);return;}
+  if(t.dataset.rename){render();return;}
+  if(t.dataset.f==="sev"||t.dataset.f==="date"){onField(t);}
+});
+view.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.f)return onField(t);
+  if(t.dataset.cf){
+    const row=t.closest(".check");const key=row.dataset.key;const parts=key.split("|");const cid=parts[2].slice(1);
+    const sid=parts[0],inst=parts[1];
+    Object.keys(S.custom).forEach(ck=>{if(ck.startsWith(sid+"|"+inst+"|")){const r=S.custom[ck].find(x=>x.id===cid);if(r)r[t.dataset.cf]=t.value;}});
+    if(t.dataset.cf==="item")row.querySelector(".item").textContent=t.value||"(untitled check)";
+    saveMeta(["custom"]);return;
+  }
+  if(t.dataset.cover){
+    S.cover[t.dataset.cover]=t.value;saveMeta(["cover"],{[t.dataset.cover]:t.value});
+    const o=view.querySelector('a.open[data-for="'+t.id+'"]');if(o){const ok=isUrl(t.value);o.hidden=!ok;o.href=ok?t.value.trim():"#";}
+    if(t.dataset.cover==="Event Name"||t.dataset.cover==="Project Number (26XXX)")renderRail();
+    return;
+  }
+  if(t.dataset.so!=null){const r=ROLES[+t.dataset.so];S.signoff[r]=Object.assign({},S.signoff[r]||{},{[t.dataset.k]:t.value});saveMeta(["signoff"],{[r]:S.signoff[r]});return;}
+  if(t.dataset.rename){
+    const arr=t.dataset.rename==="rt"?S.regTypes:S.activities;const g=arr.find(x=>x.id===t.dataset.inst);if(g){g.name=t.value;saveMeta([t.dataset.rename==="rt"?"regTypes":"activities"]);}
+    if(t.dataset.rename==="ac"){/* category kept in data for CSV */}
+  }
+});
+function onField(t){
+  const row=t.closest(".check");const key=row.dataset.key;
+  const d=Object.assign({},cs(key));d[t.dataset.f]=t.value;S.checks[key]=d;saveCheck(key);
+  row.querySelector(".meta").innerHTML=metaHTML(d);
+  if(t.dataset.f==="exp"){const p=row.querySelector(".exp");const txt=t.value;
+    if(txt){if(p)p.innerHTML="<b>Expected:</b> "+esc(txt);else row.querySelector(".item").insertAdjacentHTML("afterend",'<p class="exp"><b>Expected:</b> '+esc(txt)+"</p>");}else if(p)p.remove();}
+}
+
+/* reviewer */
+const rv=document.getElementById("reviewer");rv.value=S.reviewer||"";
+rv.addEventListener("input",()=>{S.reviewer=rv.value;persist();});
+
+/* nav (mobile) */
+const app=document.getElementById("app"),menuBtn=document.getElementById("menuBtn");
+menuBtn.addEventListener("click",()=>{const o=app.classList.toggle("nav-open");menuBtn.setAttribute("aria-expanded",String(o));});
+function closeNav(){app.classList.remove("nav-open");menuBtn.setAttribute("aria-expanded","false");}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeNav();});
+
+/* ---------- files ---------- */
+let downloads=null;
+if(window.claude&&typeof window.claude.use==="function"){window.claude.use("downloads").then(d=>{downloads=d;}).catch(()=>{});}
+async function offer(filename,data,mime){
+  if(downloads){
+    try{await downloads.save({filename,data});toast("Saved "+filename);}
+    catch(err){const c=err&&err.code;if(c==="declined")return;if(c==="rate_limited")toast("A save prompt is already open.");else toast("Couldn’t save the file here.");}
+    return;
+  }
+  try{const blob=new Blob([data],{type:mime});const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Saved "+filename);}
+  catch(e){toast("Couldn’t save the file here.");}
+}
+function baseName(){
+  const pn=(S.cover["Project Number (26XXX)"]||"2XXXX").trim().replace(/[^\w-]+/g,"");
+  const ev=(S.cover["Event Name"]||"EventName").trim().replace(/[^\w-]+/g,"");
+  return (pn||"2XXXX")+"_"+(ev||"EventName")+"_QC_v1";
+}
+document.getElementById("saveFile").addEventListener("click",()=>offer(baseName()+".json",JSON.stringify(Object.assign({app:"cvent-qc-checklist",savedAt:new Date().toISOString()},S),null,1),"application/json"));
+const fileInput=document.getElementById("fileInput");
+document.getElementById("openFile").addEventListener("click",()=>fileInput.click());
+fileInput.addEventListener("change",()=>{
+  const f=fileInput.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||typeof o!=="object"||!o.checks)throw 0;
+      if(CLOUD){if(!confirm("Create a new shared checklist from “"+f.name+"”?"))return;Cloud.importFile(normalize(o));return;}
+      if(!confirm("Replace the current checklist with “"+f.name+"”?"))return;
+      S=normalize(o);delete S.app;delete S.savedAt;rv.value=S.reviewer||"";persist();render();toast("Opened "+f.name);}
+    catch(e){toast("That file isn’t a saved QC checklist. Choose a .json file made with Save file.");}
+    fileInput.value="";};
+  r.readAsText(f);
+});
+document.getElementById("exportCsv").addEventListener("click",()=>{
+  const cols=["Step","Category / Page","Item to Check","Expected (from approved source)","What I See in the Build","Status","Reviewer","Date Checked","Severity if Fail","Notes / Issue Description"];
+  const q=v=>{v=String(v==null?"":v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const rows=[cols.map(q).join(",")];
+  allChecks().forEach(c=>{const d=cs(c.key);const n=NAV.find(x=>x.id===c.sid);
+    const step=n.num+". "+n.name+(c.sid==="s6"?" - "+c.group.name:"");
+    const exp=d.exp!=null&&d.exp!==""?d.exp:c.exp;
+    rows.push([step,c.cat,c.item,exp,d.see,statusOf(c.key),d.reviewer,d.date,d.status==="Fail"?d.sev:"",d.notes].map(q).join(","));});
+  offer(baseName()+".csv","\uFEFF"+rows.join("\r\n"),"text/csv");
+});
+document.getElementById("printBtn").addEventListener("click",()=>{try{window.print();}catch(e){toast("Printing isn’t available here. Export CSV instead.");}});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if(CLOUD){Cloud.goList();return;}
+  if(!confirm("Start a new checklist? Everything in this browser will be cleared. Save a file first if you want to keep it."))return;
+  S=fresh();rv.value="";persist();location.hash="#s1";render();toast("New checklist started");
+});
+
+/* ---------- Supabase: shared team checklists ---------- */
+const Cloud=(function(){
+  let SB=null,user=null,CID=null,open=false,channel=null,everSubscribed=false;
+  const pend={checks:new Set(),meta:new Set(),cover:{},signoff:{}};
+  let flushT=null,retryT=null,inflight=false,deferred=false;
+  const appEl=document.getElementById("app");
+  const params=new URLSearchParams(location.search);
+  const home=()=>location.pathname;
+  const time=()=>new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+  const msgOf=e=>(e&&(e.message||e.error_description||e.hint))||String(e);
+  const ok=res=>{if(res&&res.error)throw res.error;return res?res.data:null;};
+  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  function setSync(state,text){document.getElementById("savedNote").innerHTML='<span class="sync '+state+'">'+esc(text)+"</span>";}
+
+  /* row <-> app shape */
+  function rowFor(id,key,d){d=d||{};return {checklist_id:id,key,status:d.status||"Not Started",prev_status:d.prev||null,see:d.see||null,notes:d.notes||null,reviewer:d.reviewer||null,checked_on:d.date||null,severity:d.status==="Fail"&&d.sev?d.sev:null,expected:d.exp!=null&&d.exp!==""?d.exp:null};}
+  function fromRow(r){const d={status:r.status||"Not Started"};if(r.prev_status)d.prev=r.prev_status;if(r.see)d.see=r.see;if(r.notes)d.notes=r.notes;if(r.reviewer)d.reviewer=r.reviewer;if(r.checked_on)d.date=String(r.checked_on).slice(0,10);if(r.severity)d.sev=r.severity;if(r.expected)d.exp=r.expected;return d;}
+  function metaRow(s){return {cover:s.cover||{},signoff:s.signoff||{},reg_types:s.regTypes,activities:s.activities,custom_rows:s.custom||{},attest:!!s.attest};}
+  function applyMeta(c){
+    const f=fresh();
+    const next={
+      cover:Object.assign({},c.cover||{},pend.cover),
+      signoff:Object.assign({},c.signoff||{},pend.signoff),
+      regTypes:pend.meta.has("regTypes")?S.regTypes:(Array.isArray(c.reg_types)&&c.reg_types.length?c.reg_types:f.regTypes),
+      activities:pend.meta.has("activities")?S.activities:(Array.isArray(c.activities)&&c.activities.length?c.activities:f.activities),
+      custom:pend.meta.has("custom")?S.custom:(c.custom_rows&&typeof c.custom_rows==="object"?c.custom_rows:{}),
+      attest:pend.meta.has("attest")?S.attest:!!c.attest
+    };
+    let changed=false;Object.keys(next).forEach(k=>{if(!same(S[k],next[k])){S[k]=next[k];changed=true;}});
+    return changed;
+  }
+
+  /* saving: batched, retried */
+  function hasPending(){return pend.checks.size||pend.meta.size||Object.keys(pend.cover).length||Object.keys(pend.signoff).length;}
+  function schedule(){if(!CID)return;clearTimeout(flushT);setSync("saving","Saving…");flushT=setTimeout(flush,500);}
+  function queueCheck(key){pend.checks.add(key);schedule();}
+  function queueMeta(fields,patch){fields.forEach(f=>{if(f==="cover"||f==="signoff")Object.assign(pend[f],patch||{});else pend.meta.add(f);});schedule();}
+  async function flush(){
+    if(inflight){schedule();return;}
+    if(!hasPending()){setSync("","Saved to Supabase · "+time());return;}
+    const keys=[...pend.checks],meta=[...pend.meta],cover=pend.cover,signoff=pend.signoff;
+    pend.checks.clear();pend.meta.clear();pend.cover={};pend.signoff={};inflight=true;clearTimeout(retryT);
+    try{
+      const rows=keys.filter(k=>S.checks[k]).map(k=>rowFor(CID,k,S.checks[k]));
+      for(let i=0;i<rows.length;i+=500)ok(await SB.from("check_results").upsert(rows.slice(i,i+500),{onConflict:"checklist_id,key"}));
+      if(Object.keys(cover).length||Object.keys(signoff).length)ok(await SB.rpc("merge_checklist_json",{p_id:CID,p_cover:cover,p_signoff:signoff}));
+      const upd={};
+      if(meta.includes("regTypes"))upd.reg_types=S.regTypes;
+      if(meta.includes("activities"))upd.activities=S.activities;
+      if(meta.includes("custom"))upd.custom_rows=S.custom;
+      if(meta.includes("attest"))upd.attest=!!S.attest;
+      if(Object.keys(upd).length)ok(await SB.from("checklists").update(upd).eq("id",CID));
+      inflight=false;
+      if(hasPending())schedule();else setSync("","Saved to Supabase · "+time());
+    }catch(e){
+      inflight=false;
+      keys.forEach(k=>pend.checks.add(k));meta.forEach(m=>pend.meta.add(m));
+      pend.cover=Object.assign(cover,pend.cover);pend.signoff=Object.assign(signoff,pend.signoff);
+      setSync("error","Not saved yet, retrying: "+msgOf(e));
+      retryT=setTimeout(flush,5000);
+    }
+  }
+  async function remove(k,isPrefix){
+    [...pend.checks].forEach(x=>{if(isPrefix?x.startsWith(k):x===k)pend.checks.delete(x);});
+    try{let q=SB.from("check_results").delete().eq("checklist_id",CID);q=isPrefix?q.like("key",k+"%"):q.eq("key",k);ok(await q);}
+    catch(e){toast("Couldn’t remove the saved results: "+msgOf(e));}
+  }
+  window.addEventListener("beforeunload",e=>{if(CID&&(hasPending()||inflight)){e.preventDefault();e.returnValue="";}});
+
+  /* live updates from teammates */
+  function typing(){const a=document.activeElement;return !!(a&&view.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));}
+  function softRender(){
+    if(typing()){deferred=true;return;}deferred=false;
+    const openKeys=[...view.querySelectorAll(".check details[open]")].map(d=>d.closest(".check").dataset.key);const y=window.scrollY;
+    render();
+    openKeys.forEach(k=>{const d=view.querySelector('.check[data-key="'+CSS.escape(k)+'"] details');if(d)d.open=true;});
+    window.scrollTo(0,y);
+  }
+  document.addEventListener("focusout",()=>{if(deferred)setTimeout(()=>{if(deferred&&!typing())softRender();},400);});
+  const changed=new Set();let uiT=null;
+  function flushUI(){
+    const sid=current();
+    if(!STEP[sid]){softRender();changed.clear();return;}
+    changed.forEach(key=>{
+      const row=view.querySelector('.check[data-key="'+CSS.escape(key)+'"]');if(!row)return;
+      const c=stepChecks(sid).find(x=>x.key===key);if(!c){row.remove();return;}
+      const naNow=statusOf(key)==="N/A",naRow=row.classList.contains("is-na");
+      if(row.contains(document.activeElement)&&naNow===naRow&&!naRow){refreshRow(row,key);return;}
+      const wasOpen=!!row.querySelector("details[open]");const tmp=document.createElement("div");tmp.innerHTML=checkHTML(c);const nr=tmp.firstChild;
+      if(wasOpen){const d=nr.querySelector("details");if(d)d.open=true;}
+      row.replaceWith(nr);
+    });
+    changed.clear();refreshCounts();
+  }
+  function onCheck(p){
+    if(p.eventType==="DELETE"){const o=p.old||{};if(o.checklist_id&&o.checklist_id!==CID)return;if(!o.key||!S.checks[o.key])return;delete S.checks[o.key];changed.add(o.key);}
+    else{const r=p.new||{};if(r.checklist_id!==CID||pend.checks.has(r.key))return;const d=fromRow(r);
+      const cur=S.checks[r.key]?fromRow(rowFor(CID,r.key,S.checks[r.key])):null;if(cur&&same(cur,d))return;
+      S.checks[r.key]=d;changed.add(r.key);}
+    clearTimeout(uiT);uiT=setTimeout(flushUI,150);
+  }
+  function onMeta(p){const r=p.new||{};if(r.id!==CID)return;if(applyMeta(r)){clearTimeout(uiT);changed.clear();uiT=setTimeout(softRender,150);}}
+  function subscribe(){
+    channel=SB.channel("qc-"+CID)
+      .on("postgres_changes",{event:"*",schema:"public",table:"check_results",filter:"checklist_id=eq."+CID},onCheck)
+      .on("postgres_changes",{event:"DELETE",schema:"public",table:"check_results"},onCheck)
+      .on("postgres_changes",{event:"UPDATE",schema:"public",table:"checklists",filter:"id=eq."+CID},onMeta)
+      .subscribe(status=>{
+        if(status==="SUBSCRIBED"){if(everSubscribed)refetch();everSubscribed=true;}
+        else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setSync(hasPending()?"saving":"error","Live updates paused, reconnecting…");
+      });
+  }
+  async function fetchAll(id){
+    const c=ok(await SB.from("checklists").select("*").eq("id",id).single());
+    const rows=[];
+    for(let from=0;;from+=1000){const d=ok(await SB.from("check_results").select("*").eq("checklist_id",id).order("key").range(from,from+999))||[];rows.push(...d);if(d.length<1000)break;}
+    return {c,rows};
+  }
+  async function refetch(){
+    try{const {c,rows}=await fetchAll(CID);applyMeta(c);const keep={};pend.checks.forEach(k=>{if(S.checks[k])keep[k]=S.checks[k];});
+      S.checks={};rows.forEach(r=>S.checks[r.key]=fromRow(r));Object.assign(S.checks,keep);softRender();setSync("","Back in sync · "+time());}
+    catch(e){setSync("error","Couldn’t refresh: "+msgOf(e));}
+  }
+
+  /* screens before a checklist is open */
+  function gate(){
+    appEl.classList.add("gate");
+    if(!SB){view.innerHTML='<div class="gatebox"><h2>Can’t reach Supabase</h2><p>The Supabase library didn’t load. Check your internet connection, or ask IT whether cdn.jsdelivr.net is blocked.</p></div>';return;}
+    if(!user)return signInView();
+    listView();
+  }
+  function signInView(){
+    view.innerHTML='<div class="gatebox"><h2>Cvent QC Checklist</h2><p>Sign in with your work email. You’ll get a link that opens this page signed in. No password needed.</p>'+
+      '<form id="signin"><div class="f"><label for="email">Work email</label><input id="email" type="email" required autocomplete="email"></div>'+
+      '<button class="btn primary" type="submit">Email me a sign-in link</button><p class="msg" id="msg" aria-live="polite"></p></form></div>';
+    const form=document.getElementById("signin"),msg=document.getElementById("msg");
+    form.addEventListener("submit",async e=>{
+      e.preventDefault();const email=document.getElementById("email").value.trim();const btn=form.querySelector("button");btn.disabled=true;msg.className="msg";msg.textContent="Sending…";
+      const res=await SB.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+location.search,shouldCreateUser:!!CFG.allowSignups}});
+      btn.disabled=false;
+      if(res.error){msg.className="msg err";msg.textContent=/sign.?ups?|not allowed|not found|otp_disabled/i.test(res.error.message||"")?"That email doesn’t have access yet. Ask whoever manages the Supabase project to invite you.":"Couldn’t send the link: "+msgOf(res.error);}
+      else{msg.textContent="Check your inbox at "+email+". The link signs you in on this browser.";}
+    });
+  }
+  async function listView(){
+    view.innerHTML='<div class="listhead"><div><h2 style="font-size:34px;line-height:1.1">QC checklists</h2><p style="color:var(--ink2);margin:6px 0 0">Shared with everyone on your team. Changes save as you work.</p></div>'+
+      '<div class="acts"><button class="btn" id="impBtn">Import a saved file</button><button class="btn primary" id="newBtn">New checklist</button></div></div>'+
+      '<div id="list"><p class="empty">Loading checklists…</p></div>'+
+      '<p style="margin-top:28px;font-size:13px;color:var(--ink3)">Signed in as '+esc(user.email||"")+'. <a href="#" id="soLink">Sign out</a></p>';
+    document.getElementById("newBtn").onclick=newChecklist;
+    document.getElementById("impBtn").onclick=()=>document.getElementById("fileInput").click();
+    document.getElementById("soLink").onclick=e=>{e.preventDefault();signOut();};
+    const box=document.getElementById("list");
+    try{
+      const rows=ok(await SB.from("checklists").select("id,project_number,event_name,updated_at,created_by").order("updated_at",{ascending:false}))||[];
+      if(!rows.length){box.innerHTML='<p class="empty">No checklists yet. Start one with New checklist, or import a file saved from the offline version.</p>';return;}
+      box.innerHTML='<div class="tablewrap"><table><thead><tr><th>Project</th><th>Event</th><th>Last updated</th><th></th></tr></thead><tbody>'+rows.map(r=>
+        '<tr><td><a href="'+home()+'?c='+r.id+'">'+esc(r.project_number||"No project number")+'</a></td><td>'+esc(r.event_name||"Untitled event")+'</td><td>'+esc(new Date(r.updated_at).toLocaleString([], {dateStyle:"medium",timeStyle:"short"}))+'</td><td style="text-align:right">'+
+        (r.created_by===user.id?'<button class="btn ghost danger" data-del="'+r.id+'" data-name="'+esc(r.event_name||r.project_number||"this checklist")+'">Delete</button>':"")+"</td></tr>").join("")+"</tbody></table></div>";
+      box.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+        if(!confirm("Delete “"+b.dataset.name+"” for everyone? This can’t be undone."))return;
+        try{ok(await SB.from("checklists").delete().eq("id",b.dataset.del));listView();toast("Checklist deleted");}catch(e){toast("Couldn’t delete: "+msgOf(e));}
+      });
+    }catch(e){box.innerHTML='<p class="empty" style="color:var(--fail)">Couldn’t load checklists: '+esc(msgOf(e))+". If this is a new project, run supabase/schema.sql first.</p>";}
+  }
+  async function newChecklist(){
+    try{const r=ok(await SB.from("checklists").insert(metaRow(fresh())).select("id").single());location.href=home()+"?c="+r.id+"#s2";}
+    catch(e){toast("Couldn’t create a checklist: "+msgOf(e));}
+  }
+  async function importFile(o){
+    try{
+      setSync("saving","Importing…");
+      const r=ok(await SB.from("checklists").insert(metaRow(o)).select("id").single());
+      const rows=Object.keys(o.checks||{}).map(k=>rowFor(r.id,k,o.checks[k]));
+      for(let i=0;i<rows.length;i+=500)ok(await SB.from("check_results").upsert(rows.slice(i,i+500),{onConflict:"checklist_id,key"}));
+      location.href=home()+"?c="+r.id+"#s13";
+    }catch(e){toast("Import failed: "+msgOf(e));setSync("error","Import failed");}
+  }
+  async function openChecklist(id){
+    appEl.classList.add("gate");view.innerHTML='<div class="gatebox"><p>Loading checklist…</p></div>';
+    try{
+      const {c,rows}=await fetchAll(id);
+      CID=id;const rvName=S.reviewer;S=fresh();S.reviewer=rvName;applyMeta(c);rows.forEach(r=>S.checks[r.key]=fromRow(r));
+      open=true;lastSid=current();
+      const p=(location.hash||"").slice(1).split("/");render(p[1]?decodeURIComponent(p.slice(1).join("/")):null);
+      setSync("","Saved to Supabase");subscribe();
+    }catch(e){
+      view.innerHTML='<div class="gatebox"><h2>Couldn’t open this checklist</h2><p>'+esc(msgOf(e))+'</p><p><a href="'+home()+'">Back to all checklists</a></p></div>';
+    }
+  }
+  async function signOut(){try{if(channel)SB.removeChannel(channel);await SB.auth.signOut();}catch(e){}location.href=home();}
+  function goList(){location.href=home();}
+
+  async function boot(){
+    if(!(window.supabase&&window.supabase.createClient)){gate();return;}
+    SB=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+    try{const {data}=await SB.auth.getSession();user=data&&data.session?data.session.user:null;}catch(e){user=null;}
+    SB.auth.onAuthStateChange((ev,session)=>{
+      const u=session?session.user:null;const was=!!user;user=u;
+      if(was!==!!u){if(!u)location.href=home();else if(!open)boot2();}
+    });
+    boot2();
+  }
+  function boot2(){
+    if(!user){gate();return;}
+    document.getElementById("resetBtn").textContent="All checklists";document.getElementById("resetBtn").classList.remove("danger");
+    document.getElementById("openFile").textContent="Import file";
+    const so=document.getElementById("signOutBtn");so.hidden=false;so.onclick=signOut;
+    const w=document.getElementById("whoami");w.hidden=false;w.textContent="Signed in as "+(user.email||"");
+    if(!rv.value&&user.email){/* leave name for the reviewer to type */}
+    const id=params.get("c");
+    if(id&&/^[0-9a-f-]{36}$/i.test(id))openChecklist(id);else gate();
+  }
+  return {boot,gate,queueCheck,queueMeta,remove,importFile,goList,isOpen:()=>open};
+})();
+
+lastSid=current();
+if(CLOUD){Cloud.boot();}
+else{
+  const p=(location.hash||"").slice(1).split("/");
+  render(p[1]?decodeURIComponent(p.slice(1).join("/")):null);
+  if(load())note("Progress restored from this browser");
+}
+
+})();
+</script>
+</body>
+</html>
