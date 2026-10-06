@@ -287,7 +287,8 @@ td .bar{min-width:120px;height:7px;margin-top:5px}
       <button class="btn" id="exportCsv">Export CSV</button>
       <button class="btn" id="printBtn">Print</button>
       <button class="btn ghost danger" id="resetBtn" style="grid-column:1/-1">Start a new checklist</button>
-      <button class="btn ghost" id="signOutBtn" style="grid-column:1/-1" hidden>Sign out</button>
+      <button class="btn ghost" id="pwBtn" hidden>Change password</button>
+      <button class="btn ghost" id="signOutBtn" hidden>Sign out</button>
       <div class="saved" id="savedNote" aria-live="polite"></div>
       <input type="file" id="fileInput" accept=".json,application/json" class="sr" tabindex="-1">
     </div>
@@ -908,26 +909,49 @@ const Cloud=(function(){
     listView();
   }
   function signInView(){
-    view.innerHTML='<div class="gatebox"><h2>Cvent QC Checklist</h2><p>Sign in with your work email. You’ll get a link that opens this page signed in. No password needed.</p>'+
-      '<form id="signin"><div class="f"><label for="email">Work email</label><input id="email" type="email" required autocomplete="email"></div>'+
-      '<button class="btn primary" type="submit">Email me a sign-in link</button><p class="msg" id="msg" aria-live="polite"></p></form></div>';
+    view.innerHTML='<div class="gatebox"><h2>Cvent QC Checklist</h2><p>Sign in with the email and password your checklist admin set up for you.</p>'+
+      '<form id="signin"><div class="f"><label for="email">Work email</label><input id="email" type="email" required autocomplete="username"></div>'+
+      '<div class="f"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password"></div>'+
+      '<button class="btn primary" type="submit">Sign in</button><p class="msg" id="msg" aria-live="polite"></p></form>'+
+      '<p style="margin-top:22px;font-size:13px;color:var(--ink3)">Forgot your password or need access? Ask your checklist admin to reset it or add you.</p></div>';
     const form=document.getElementById("signin"),msg=document.getElementById("msg");
     form.addEventListener("submit",async e=>{
-      e.preventDefault();const email=document.getElementById("email").value.trim();const btn=form.querySelector("button");btn.disabled=true;msg.className="msg";msg.textContent="Sending…";
-      const res=await SB.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+location.search,shouldCreateUser:!!CFG.allowSignups}});
+      e.preventDefault();const btn=form.querySelector("button");btn.disabled=true;msg.className="msg";msg.textContent="Signing in…";
+      const res=await SB.auth.signInWithPassword({email:document.getElementById("email").value.trim(),password:document.getElementById("password").value});
       btn.disabled=false;
-      if(res.error){msg.className="msg err";msg.textContent=/sign.?ups?|not allowed|not found|otp_disabled/i.test(res.error.message||"")?"That email doesn’t have access yet. Ask whoever manages the Supabase project to invite you.":"Couldn’t send the link: "+msgOf(res.error);}
-      else{msg.textContent="Check your inbox at "+email+". The link signs you in on this browser.";}
+      if(res.error){const m=res.error.message||"";msg.className="msg err";
+        msg.textContent=/invalid login|invalid credentials/i.test(m)?"That email and password don’t match. Check for typos, or ask your admin to reset your password.":
+          /not confirmed/i.test(m)?"This account isn’t confirmed yet. Ask your admin to confirm it in Supabase.":"Couldn’t sign in: "+msgOf(res.error);
+        document.getElementById("password").select();}
+      else{msg.textContent="Signed in.";}
+    });
+  }
+  function passwordView(){
+    appEl.classList.add("gate");
+    view.innerHTML='<div class="gatebox"><h2>Change password</h2><p>Signed in as '+esc(user.email||"")+'. Use at least 8 characters.</p>'+
+      '<form id="pwform"><div class="f"><label for="pw1">New password</label><input id="pw1" type="password" required minlength="8" autocomplete="new-password"></div>'+
+      '<div class="f"><label for="pw2">Type it again</label><input id="pw2" type="password" required minlength="8" autocomplete="new-password"></div>'+
+      '<button class="btn primary" type="submit">Save new password</button> <button class="btn" type="button" id="pwCancel">Cancel</button><p class="msg" id="pwmsg" aria-live="polite"></p></form></div>';
+    const back=()=>{if(open)render();else listView();};
+    document.getElementById("pwCancel").onclick=back;
+    document.getElementById("pwform").addEventListener("submit",async e=>{
+      e.preventDefault();const a=document.getElementById("pw1").value,b=document.getElementById("pw2").value,m=document.getElementById("pwmsg");
+      if(a!==b){m.className="msg err";m.textContent="The two passwords don’t match.";return;}
+      m.className="msg";m.textContent="Saving…";
+      const res=await SB.auth.updateUser({password:a});
+      if(res.error){m.className="msg err";m.textContent=/reauth/i.test(res.error.message||"")?"For security, sign out and back in, then change your password right away.":"Couldn’t change it: "+msgOf(res.error);return;}
+      toast("Password changed");back();
     });
   }
   async function listView(){
     view.innerHTML='<div class="listhead"><div><h2 style="font-size:34px;line-height:1.1">QC checklists</h2><p style="color:var(--ink2);margin:6px 0 0">Shared with everyone on your team. Changes save as you work.</p></div>'+
       '<div class="acts"><button class="btn" id="impBtn">Import a saved file</button><button class="btn primary" id="newBtn">New checklist</button></div></div>'+
       '<div id="list"><p class="empty">Loading checklists…</p></div>'+
-      '<p style="margin-top:28px;font-size:13px;color:var(--ink3)">Signed in as '+esc(user.email||"")+'. <a href="#" id="soLink">Sign out</a></p>';
+      '<p style="margin-top:28px;font-size:13px;color:var(--ink3)">Signed in as '+esc(user.email||"")+'. <a href="#" id="pwLink">Change password</a> · <a href="#" id="soLink">Sign out</a></p>';
     document.getElementById("newBtn").onclick=newChecklist;
     document.getElementById("impBtn").onclick=()=>document.getElementById("fileInput").click();
     document.getElementById("soLink").onclick=e=>{e.preventDefault();signOut();};
+    document.getElementById("pwLink").onclick=e=>{e.preventDefault();passwordView();};
     const box=document.getElementById("list");
     try{
       const rows=ok(await SB.from("checklists").select("id,project_number,event_name,updated_at,created_by").order("updated_at",{ascending:false}))||[];
@@ -984,6 +1008,7 @@ const Cloud=(function(){
     document.getElementById("resetBtn").textContent="All checklists";document.getElementById("resetBtn").classList.remove("danger");
     document.getElementById("openFile").textContent="Import file";
     const so=document.getElementById("signOutBtn");so.hidden=false;so.onclick=signOut;
+    const pw=document.getElementById("pwBtn");pw.hidden=false;pw.onclick=()=>{closeNav();passwordView();};
     const w=document.getElementById("whoami");w.hidden=false;w.textContent="Signed in as "+(user.email||"");
     if(!rv.value&&user.email){/* leave name for the reviewer to type */}
     const id=params.get("c");
