@@ -7,7 +7,7 @@
 // Leave these as-is to run the checklist in browser-only mode (no sign-in,
 // progress saved per browser).
 window.QC_CONFIG = {
-  supabaseUrl: "https://github.com/Augeo-ICT-MB/Build-Team-Checklist.git",
+  supabaseUrl: "https://ehxjgruvqurtentztnlw.supabase.co",
   supabaseAnonKey: "sb_publishable_-0KyjWvVqdDKZqbyuWYVRQ_04gRfpaG",
 
   // false = only people you invite in Supabase can sign in (recommended).
